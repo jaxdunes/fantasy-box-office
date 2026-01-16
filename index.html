@@ -4,531 +4,824 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Fantasy Box Office League</title>
+
   <style>
     :root{
-      --bg:#070912;
-      --panel:rgba(18,22,38,.60);
-      --panel2:rgba(18,22,38,.42);
-      --border:rgba(255,255,255,.08);
-      --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.62);
-      --muted2:rgba(255,255,255,.44);
+      --bg0:#070815;
+      --bg1:#0b0f25;
+      --card: rgba(255,255,255,.06);
+      --stroke: rgba(255,255,255,.12);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.65);
+      --muted2: rgba(255,255,255,.45);
       --accent:#8b5cf6;
       --good:#22c55e;
-      --shadow: 0 18px 70px rgba(0,0,0,.45);
-      --radius:22px;
+      --bad:#ef4444;
+      --shadow: 0 20px 50px rgba(0,0,0,.55);
+      --radius: 18px;
+      --radius2: 26px;
     }
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
       background:
-        radial-gradient(1200px 600px at 20% 10%, rgba(139,92,246,.35), transparent 55%),
-        radial-gradient(900px 700px at 70% 15%, rgba(34,197,94,.14), transparent 55%),
-        radial-gradient(1100px 700px at 45% 70%, rgba(99,102,241,.18), transparent 62%),
-        linear-gradient(180deg, #070912 0%, #050612 100%);
+        radial-gradient(1200px 800px at 10% 10%, rgba(139,92,246,.28), transparent 60%),
+        radial-gradient(900px 600px at 70% 20%, rgba(34,197,94,.18), transparent 55%),
+        radial-gradient(800px 700px at 40% 70%, rgba(59,130,246,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
       min-height:100vh;
     }
-    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
+
+    .wrap{max-width:1120px;margin:48px auto;padding:0 18px}
     .hero{
-      border:1px solid var(--border);
-      background:linear-gradient(135deg, rgba(139,92,246,.14), rgba(255,255,255,.03));
-      border-radius:28px;
-      padding:22px 22px 18px;
-      box-shadow:var(--shadow);
-      position:relative;
-      overflow:hidden;
+      border:1px solid var(--stroke);
+      background:
+        radial-gradient(700px 450px at 15% 30%, rgba(139,92,246,.35), transparent 65%),
+        radial-gradient(700px 450px at 70% 10%, rgba(34,197,94,.22), transparent 70%),
+        rgba(255,255,255,.04);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      padding:28px 26px 22px;
     }
-    .kicker{
-      font-size:12px;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      color:var(--muted);
+    .kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted2)}
+    h1{margin:10px 0 6px;font-size:40px;line-height:1.05}
+    .sub{margin:0;color:var(--muted);max-width:80ch;font-size:14px}
+
+    .metaRow{
+      margin-top:16px;
       display:flex;
       gap:10px;
-      align-items:center;
-    }
-    .dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 4px rgba(34,197,94,.12)}
-    h1{margin:10px 0 8px;font-size:40px;line-height:1.05}
-    .sub{margin:0;color:var(--muted);max-width:72ch;font-size:14px}
-    .bar{
-      margin-top:14px;
-      display:flex;
-      gap:12px;
       flex-wrap:wrap;
       align-items:center;
       justify-content:space-between;
     }
     .chips{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
     .chip{
-      border:1px solid var(--border);
-      background:rgba(0,0,0,.20);
-      padding:8px 10px;
-      border-radius:999px;
-      font-size:12px;
-      color:var(--muted);
-      display:flex;align-items:center;gap:8px;
+      display:inline-flex;gap:8px;align-items:center;
+      padding:8px 12px;border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      font-size:13px;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:999px;background: var(--good);
+      box-shadow:0 0 0 3px rgba(34,197,94,.18);
     }
     .btns{display:flex;gap:10px;flex-wrap:wrap}
     button{
-      border:1px solid var(--border);
-      background:rgba(0,0,0,.20);
-      color:var(--text);
-      padding:9px 12px;
-      border-radius:999px;
-      font-size:12px;
       cursor:pointer;
-      transition:.15s ease;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding:9px 12px;
+      border-radius: 999px;
+      font-size:13px;
     }
-    button:hover{transform:translateY(-1px);background:rgba(255,255,255,.06)}
-    button:active{transform:translateY(0px)}
-    .grid{
+    button:hover{background: rgba(255,255,255,.09)}
+
+    /* Upcoming scroller */
+    .sectionCard{
       margin-top:16px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .sectionHead{
+      padding:14px 16px 10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;
+    }
+    .sectionTitle{font-weight:700}
+    .sectionSub{color:var(--muted2);font-size:12px;margin-top:2px}
+    .scroller{
+      padding:12px 12px 14px;
+      display:flex;
+      gap:12px;
+      overflow:auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .scroller::-webkit-scrollbar{height:10px}
+    .scroller::-webkit-scrollbar-thumb{background:rgba(255,255,255,.10);border-radius:999px}
+    .scroller::-webkit-scrollbar-track{background:rgba(0,0,0,.12);border-radius:999px}
+
+    .movieCard{
+      min-width: 420px;
+      max-width: 520px;
+      scroll-snap-align: start;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+      border-radius: 18px;
+      padding:12px;
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+    }
+    @media (max-width: 520px){
+      .movieCard{min-width: 320px}
+    }
+
+    .poster{
+      width: 92px;
+      aspect-ratio: 2 / 3; /* REAL poster shape */
+      border-radius: 14px;
+      overflow:hidden;
+      background:
+        radial-gradient(120px 120px at 30% 20%, rgba(139,92,246,.25), transparent 70%),
+        radial-gradient(120px 120px at 70% 50%, rgba(34,197,94,.18), transparent 70%),
+        rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      flex: 0 0 auto;
+    }
+    .poster img{
+      width:100%;height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .movieMeta{flex:1 1 auto;min-width:0}
+    .movieTop{
+      display:flex;gap:10px;justify-content:space-between;align-items:flex-start;
+    }
+    .movieTitle{
+      font-weight:750;
+      font-size:20px;
+      line-height:1.1;
+      margin:2px 0 6px;
+      word-break: break-word;
+    }
+    .movieDate{
+      font-size:18px;
+      color: var(--text);
+      opacity:.9;
+      white-space:nowrap;
+      padding-left:8px;
+    }
+
+    .tags{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:6px;
+      align-items:center;
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      color: var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .avatar{
+      width:22px;height:22px;border-radius:999px;
+      display:inline-flex;align-items:center;justify-content:center;
+      font-weight:800;font-size:12px;
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.90);
+    }
+    .pillHit{border-color: rgba(34,197,94,.35); color: rgba(255,255,255,.85)}
+    .pillBomb{border-color: rgba(239,68,68,.35); color: rgba(255,255,255,.85)}
+    .dotHit{width:8px;height:8px;border-radius:999px;background:var(--good)}
+    .dotBomb{width:8px;height:8px;border-radius:999px;background:var(--bad)}
+
+    /* Main layout */
+    .grid{
+      margin-top:14px;
       display:grid;
-      grid-template-columns: 380px 1fr;
+      grid-template-columns: 360px 1fr;
       gap:14px;
       align-items:start;
     }
-    .card{
-      border:1px solid var(--border);
-      background:var(--panel);
-      border-radius:var(--radius);
-      box-shadow:0 10px 40px rgba(0,0,0,.35);
+    @media (max-width: 920px){ .grid{grid-template-columns:1fr} }
+
+    .panel{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
       overflow:hidden;
     }
-    .card .head{
+    .panelHead{
       padding:14px 14px 10px;
-      border-bottom:1px solid var(--border);
-      display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+      display:flex;justify-content:space-between;align-items:flex-end;
+      border-bottom:1px solid rgba(255,255,255,.08);
     }
-    .card .title{
-      font-weight:700;
-      font-size:13px;
-      letter-spacing:.02em;
-    }
-    .card .hint{font-size:12px;color:var(--muted)}
-    .card .body{padding:12px 14px 14px}
+    .panelTitle{font-weight:700}
+    .panelSub{color:var(--muted2);font-size:12px;margin-top:2px}
+    .panelBody{padding:12px 14px 14px}
+
     .search{
       width:100%;
-      border:1px solid var(--border);
-      background:rgba(0,0,0,.22);
-      color:var(--text);
       padding:10px 12px;
-      border-radius:12px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.20);
+      color: var(--text);
       outline:none;
       font-size:13px;
-      margin-top:10px;
     }
+
     .list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
-    .row{
-      border:1px solid var(--border);
-      background:rgba(0,0,0,.18);
+    .rowBtn{
+      text-align:left;
+      display:flex;justify-content:space-between;align-items:center;
+      gap:10px;
+      padding:10px 12px;
       border-radius:14px;
-      padding:10px 10px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      cursor:pointer;
-      transition:.15s ease;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
     }
-    .row:hover{background:rgba(255,255,255,.05)}
-    .row.active{outline:2px solid rgba(139,92,246,.35);background:rgba(139,92,246,.08)}
-    .who{display:flex;flex-direction:column;gap:2px}
-    .name{font-weight:750;font-size:13px}
-    .mini{font-size:12px;color:var(--muted)}
-    .score{
-      font-variant-numeric: tabular-nums;
-      font-weight:800;
-      font-size:13px;
+    .rowBtn:hover{background: rgba(255,255,255,.06)}
+    .rank{color:var(--muted2);font-size:12px}
+    .name{font-weight:700}
+    .score{font-variant-numeric: tabular-nums; color: var(--text)}
+    .neg{color: #fb7185}
+    .pos{color:#86efac}
+
+    .detailTop{
+      display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
+      padding:14px 14px 10px;border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .detailTop h2{margin:0;font-size:18px}
+    .detailTop .small{color:var(--muted2);font-size:12px;margin-top:3px}
+    .pill{
+      display:inline-flex;gap:8px;align-items:center;
+      padding:7px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      color: var(--muted);
+      font-size:12px;
       white-space:nowrap;
     }
-    .detailTop{
-      display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
-    }
-    .detailName{font-weight:850;font-size:18px}
-    .detailMeta{color:var(--muted);font-size:12px;margin-top:2px}
-    .bigScore{font-weight:900;font-size:22px}
-    .section{margin-top:14px}
-    .label{
-      font-size:12px;
-      color:var(--muted);
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      margin-bottom:8px;
-    }
-    .posterGrid{
+
+    .section{padding:12px 14px 14px}
+    .sectionLabel{color:var(--muted);font-size:13px;margin:0 0 10px;font-weight:700}
+
+    .posters{
       display:grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap:10px;
+      gap:12px;
     }
-    .poster{
-      border:1px solid var(--border);
-      background:rgba(0,0,0,.16);
-      border-radius:16px;
+    @media (max-width: 520px){ .posters{grid-template-columns: repeat(2, minmax(0,1fr));} }
+
+    .posterCard{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
       overflow:hidden;
-      min-height:140px;
+    }
+    .posterImgWrap{
+      width:100%;
+      aspect-ratio: 2 / 3;
+      background:
+        radial-gradient(120px 120px at 30% 20%, rgba(139,92,246,.25), transparent 70%),
+        radial-gradient(120px 120px at 70% 50%, rgba(34,197,94,.18), transparent 70%),
+        rgba(255,255,255,.04);
+      border-bottom:1px solid rgba(255,255,255,.08);
       position:relative;
     }
-    .poster img{
-      width:100%;
-      height:170px;
+    .posterImg{
+      position:absolute;inset:0;
+      width:100%;height:100%;
       object-fit:cover;
       display:block;
-      filter:saturate(1.02) contrast(1.02);
     }
-    .poster .cap{
-      padding:9px 10px 10px;
+    .posterTitle{
+      padding:8px 10px 10px;
       font-size:12px;
-      color:var(--text);
+      color: var(--muted);
       line-height:1.25;
-      min-height:42px;
     }
-    .poster .cap .subcap{display:block;color:var(--muted2);font-size:11px;margin-top:2px}
-    .mutedLine{margin-top:10px;color:var(--muted2);font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-    .debug{color:#fca5a5;font-size:12px;margin-top:8px;white-space:pre-wrap}
-    @media (max-width: 920px){
-      .grid{grid-template-columns:1fr}
+
+    .empty{
+      padding:14px;
+      border-radius: 14px;
+      border:1px dashed rgba(255,255,255,.14);
+      color: var(--muted2);
+      background: rgba(0,0,0,.14);
     }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="hero">
-      <div class="kicker"><span class="dot"></span> Q1 • SPLIT BOMBS • LIVE STANDINGS</div>
+      <div class="kicker">Q1 • SPLIT BOMBS • LIVE STANDINGS</div>
       <h1>Fantasy Box Office League</h1>
-      <p class="sub">Scores update from your Google Sheet. Hits earn their own profit. Bombs are split across opponents (negative exposure).</p>
-      <div class="bar">
+      <p class="sub">Upcoming scroller only shows unreleased movies. Bomb cards show no names.</p>
+
+      <div class="metaRow">
         <div class="chips">
-          <div class="chip">● <span id="fbo-status">Live</span></div>
-          <div class="chip" id="fbo-updated">Updated: —</div>
-          <div class="chip" id="fbo-count">0 players</div>
+          <div class="chip"><span class="dot"></span><span>Live</span></div>
+          <div class="chip" id="updatedChip">Updated: —</div>
+          <div class="chip" id="playerCountChip">0 players</div>
         </div>
         <div class="btns">
-          <button id="btn-refresh">↻ Refresh now</button>
-          <button id="btn-clear">× Clear selection</button>
+          <button id="refreshBtn">↻ Refresh now</button>
+          <button id="clearBtn">✕ Clear selection</button>
         </div>
       </div>
-      <div id="fbo-debug" class="debug" style="display:none;"></div>
+    </div>
+
+    <div class="sectionCard">
+      <div class="sectionHead">
+        <div>
+          <div class="sectionTitle">Upcoming Releases</div>
+          <div class="sectionSub" id="upcomingSub">Loading…</div>
+        </div>
+        <div class="chip" id="upcomingCount">0 movies</div>
+      </div>
+      <div class="scroller" id="upcoming"></div>
     </div>
 
     <div class="grid">
-      <div class="card">
-        <div class="head">
+      <div class="panel">
+        <div class="panelHead">
           <div>
-            <div class="title">Standings</div>
-            <div class="hint">Tap a player to expand</div>
+            <div class="panelTitle">Standings</div>
+            <div class="panelSub">Tap a player to expand</div>
           </div>
-          <div class="hint" id="standings-meta"></div>
+          <div class="panelTitle" id="standingsCount">0 players</div>
         </div>
-        <div class="body">
-          <input class="search" id="search" placeholder="Search players..." />
+        <div class="panelBody">
+          <input class="search" id="search" placeholder="Search players…" />
           <div class="list" id="standings"></div>
         </div>
       </div>
 
-      <div class="card">
-        <div class="head">
+      <div class="panel">
+        <div class="detailTop">
           <div>
-            <div class="title">Select a player</div>
-            <div class="hint">Their roster will appear here.</div>
+            <h2 id="detailName">Select a player</h2>
+            <div class="small" id="detailHint">Their roster will appear here.</div>
           </div>
-          <div class="hint" id="detail-rank"></div>
+          <div class="pill" id="detailTotal">—</div>
         </div>
-        <div class="body" id="detail">
-          <div class="hint">Pick someone on the left to view their hits + bomb exposure.</div>
+        <div class="section">
+          <div class="empty" id="detailEmpty">Pick someone on the left to view their hits + bomb exposure.</div>
+
+          <div id="detailContent" style="display:none;">
+            <h3 class="sectionLabel">Hits</h3>
+            <div class="posters" id="hits"></div>
+
+            <div style="height:12px"></div>
+
+            <h3 class="sectionLabel">Bomb Exposure (1/6 each)</h3>
+            <div class="posters" id="bombs"></div>
+          </div>
         </div>
       </div>
     </div>
-
-    <div class="mutedLine">
-      <span>Hosted on GitHub Pages · Dark / Cinematic theme</span>
-      <span>Auto-refresh: every 30s · Cache-bust enabled</span>
-    </div>
   </div>
 
-  <script>
-    // ✅ Your published CSV
-    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8g_VBKkleUsEkvhsj-Gs4Xsk5k9RifmPFUHw8Yq0_K5X8cca9p1or8TBNI5UbfglWT-A6uVSed_tX/pub?gid=784663852&single=true&output=csv";
+<script>
+  // ====== PASTE YOUR URLs HERE ======
+  const API_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8g_VBKkleUsEkvhsj-Gs4Xsk5k9RifmPFUHw8Yq0_K5X8cca9p1or8TBNI5UbfglWT-A6uVSed_tX/pub?gid=784663852&single=true&output=csv";
+  const MOVIES_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8g_VBKkleUsEkvhsj-Gs4Xsk5k9RifmPFUHw8Yq0_K5X8cca9p1or8TBNI5UbfglWT-A6uVSed_tX/pub?gid=29963569&single=true&output=csv";
+  // =================================
 
-    // ---------- Robust CSV parser (handles quotes, commas, empty fields, CRLF) ----------
-    function parseCSV(text){
-      text = (text || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-      const rows = [];
-      let row = [];
-      let field = "";
-      let i = 0;
-      let inQuotes = false;
+  const REFRESH_MS = 30000;
 
-      while (i < text.length) {
-        const c = text[i];
+  const els = {
+    updatedChip: document.getElementById("updatedChip"),
+    playerCountChip: document.getElementById("playerCountChip"),
+    standingsCount: document.getElementById("standingsCount"),
+    standings: document.getElementById("standings"),
+    search: document.getElementById("search"),
+    refreshBtn: document.getElementById("refreshBtn"),
+    clearBtn: document.getElementById("clearBtn"),
 
-        if (inQuotes) {
-          if (c === '"') {
-            if (text[i+1] === '"') { field += '"'; i += 2; continue; }
-            inQuotes = false; i++; continue;
-          } else {
-            field += c; i++; continue;
-          }
-        } else {
-          if (c === '"') { inQuotes = true; i++; continue; }
-          if (c === ",") { row.push(field); field=""; i++; continue; }
-          if (c === "\n") { row.push(field); rows.push(row); row=[]; field=""; i++; continue; }
-          field += c; i++; continue;
-        }
+    detailName: document.getElementById("detailName"),
+    detailHint: document.getElementById("detailHint"),
+    detailTotal: document.getElementById("detailTotal"),
+    detailEmpty: document.getElementById("detailEmpty"),
+    detailContent: document.getElementById("detailContent"),
+    hits: document.getElementById("hits"),
+    bombs: document.getElementById("bombs"),
+
+    upcoming: document.getElementById("upcoming"),
+    upcomingSub: document.getElementById("upcomingSub"),
+    upcomingCount: document.getElementById("upcomingCount"),
+  };
+
+  function parseCSV(text){
+    const rows = [];
+    let row = [], cur = "", inQuotes = false;
+    for (let i=0;i<text.length;i++){
+      const c = text[i], n = text[i+1];
+      if (c === '"'){
+        if (inQuotes && n === '"'){ cur += '"'; i++; }
+        else inQuotes = !inQuotes;
+      } else if (c === "," && !inQuotes){
+        row.push(cur); cur="";
+      } else if ((c === "\n" || c === "\r") && !inQuotes){
+        if (c === "\r" && n === "\n") i++;
+        row.push(cur);
+        if (row.length > 1 || row[0] !== "") rows.push(row);
+        row=[]; cur="";
+      } else {
+        cur += c;
       }
-      // last field
-      row.push(field);
-      rows.push(row);
-
-      // trim trailing empty row
-      while (rows.length && rows[rows.length-1].every(v => (v||"").trim() === "")) rows.pop();
-      return rows;
     }
+    if (cur.length || row.length){ row.push(cur); rows.push(row); }
+    return rows;
+  }
 
-    function money(n){
-      const v = Number(n || 0);
-      const sign = v < 0 ? "-" : "";
-      const abs = Math.abs(v);
-      if (abs >= 1e9) return sign + "$" + (abs/1e9).toFixed(2) + "B";
-      if (abs >= 1e6) return sign + "$" + (abs/1e6).toFixed(1) + "M";
-      if (abs >= 1e3) return sign + "$" + (abs/1e3).toFixed(1) + "K";
-      return sign + "$" + abs.toFixed(0);
-    }
+  function safeStr(v){ return (v ?? "").toString().trim(); }
 
-    function safeStr(s){ return (s ?? "").toString().trim(); }
-    function safeImg(url){ return safeStr(url) || ""; }
+  function normKey(s){
+    return safeStr(s)
+      .toLowerCase()
+      .replace(/\u00a0/g, " ")
+      .replace(/['’"]/g, "")
+      .replace(/[:\-—–.,!?()]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
 
-    function buildCard(title, posterUrl, sub){
-      const div = document.createElement("div");
-      div.className = "poster";
+  function fmtMoney(n){
+    const v = Number(n || 0);
+    const sign = v < 0 ? "-" : "";
+    const abs = Math.abs(v);
+    if (abs >= 1e9) return sign + "$" + (abs/1e9).toFixed(2) + "B";
+    if (abs >= 1e6) return sign + "$" + (abs/1e6).toFixed(1) + "M";
+    if (abs >= 1e3) return sign + "$" + (abs/1e3).toFixed(1) + "K";
+    return sign + "$" + abs.toFixed(0);
+  }
 
+  function avatarFor(name){
+    const initial = safeStr(name).slice(0,1).toUpperCase() || "?";
+    return { initial };
+  }
+
+  function posterCard(title, url){
+    const t = safeStr(title);
+    const u = safeStr(url);
+
+    const card = document.createElement("div");
+    card.className = "posterCard";
+
+    const imgWrap = document.createElement("div");
+    imgWrap.className = "posterImgWrap";
+
+    if (u){
       const img = document.createElement("img");
-      const src = safeImg(posterUrl);
-      if (src) img.src = src;
-      else {
-        img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`
-          <svg xmlns="http://www.w3.org/2000/svg" width="600" height="900">
-            <defs>
-              <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
-                <stop offset="0" stop-color="#111827"/>
-                <stop offset="1" stop-color="#0b1025"/>
-              </linearGradient>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#g)"/>
-            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
-              fill="rgba(255,255,255,.35)" font-family="system-ui" font-size="28">No poster</text>
-          </svg>
-        `);
+      img.className = "posterImg";
+      img.alt = t;
+      img.loading = "lazy";
+      img.decoding = "async";
+      img.referrerPolicy = "no-referrer";
+      img.src = u;
+      img.onerror = () => { img.remove(); };
+      imgWrap.appendChild(img);
+    }
+
+    const label = document.createElement("div");
+    label.className = "posterTitle";
+    label.textContent = t || "—";
+
+    card.appendChild(imgWrap);
+    card.appendChild(label);
+    return card;
+  }
+
+  function upcomingRow(movie){
+    const wrap = document.createElement("div");
+    wrap.className = "movieCard";
+
+    const poster = document.createElement("div");
+    poster.className = "poster";
+    if (movie.posterUrl){
+      const img = document.createElement("img");
+      img.alt = movie.title;
+      img.loading = "lazy";
+      img.decoding = "async";
+      img.referrerPolicy = "no-referrer";
+      img.src = movie.posterUrl;
+      img.onerror = () => { img.remove(); };
+      poster.appendChild(img);
+    }
+
+    const meta = document.createElement("div");
+    meta.className = "movieMeta";
+
+    const top = document.createElement("div");
+    top.className = "movieTop";
+
+    const left = document.createElement("div");
+    const title = document.createElement("div");
+    title.className = "movieTitle";
+    title.textContent = movie.title || "—";
+    left.appendChild(title);
+
+    const date = document.createElement("div");
+    date.className = "movieDate";
+    date.textContent = movie.releaseShort || "—";
+
+    top.appendChild(left);
+    top.appendChild(date);
+
+    const tags = document.createElement("div");
+    tags.className = "tags";
+
+    // Owner tag (ONLY for hits; not for bombs)
+    if (movie.kind === "hit" && movie.owner){
+      const ownerTag = document.createElement("div");
+      ownerTag.className = "tag";
+      const av = document.createElement("span");
+      av.className = "avatar";
+      av.textContent = avatarFor(movie.owner).initial;
+      const ownerText = document.createElement("span");
+      ownerText.textContent = movie.owner;
+      ownerTag.appendChild(av);
+      ownerTag.appendChild(ownerText);
+      tags.appendChild(ownerTag);
+    }
+
+    // Hit/Bomb tag (no names for bombs)
+    const typeTag = document.createElement("div");
+    typeTag.className = "tag " + (movie.kind === "hit" ? "pillHit" : "pillBomb");
+    const dot = document.createElement("span");
+    dot.className = (movie.kind === "hit" ? "dotHit" : "dotBomb");
+    const typeText = document.createElement("span");
+    typeText.textContent = (movie.kind === "hit" ? "Hit" : "Bomb exposure");
+    typeTag.appendChild(dot);
+    typeTag.appendChild(typeText);
+    tags.appendChild(typeTag);
+
+    // Optional profit tag
+    const profitTag = document.createElement("div");
+    profitTag.className = "tag";
+    profitTag.textContent = "Profit: " + fmtMoney(movie.profit || 0);
+    tags.appendChild(profitTag);
+
+    meta.appendChild(top);
+    meta.appendChild(tags);
+
+    wrap.appendChild(poster);
+    wrap.appendChild(meta);
+    return wrap;
+  }
+
+  // ===== Data =====
+  let API = [];
+  let MOVIES = [];
+  let selectedPlayer = null;
+
+  function buildLookupsFromAPI(){
+    const hitOwnerByKey = new Map();
+    const bombKeys = new Set();
+
+    API.forEach(p => {
+      for (let i=1;i<=3;i++){
+        const title = p[`hit${i}`];
+        if (!safeStr(title)) continue;
+        const k = normKey(title);
+        hitOwnerByKey.set(k, p.player);
       }
-
-      const cap = document.createElement("div");
-      cap.className = "cap";
-      cap.textContent = title || "—";
-      if (sub){
-        const s = document.createElement("span");
-        s.className = "subcap";
-        s.textContent = sub;
-        cap.appendChild(s);
+      for (let i=1;i<=6;i++){
+        const title = p[`bomb${i}`];
+        if (!safeStr(title)) continue;
+        bombKeys.add(normKey(title));
       }
+    });
 
-      div.appendChild(img);
-      div.appendChild(cap);
-      return div;
-    }
+    return { hitOwnerByKey, bombKeys };
+  }
 
-    // ---------- Render ----------
-    let STATE = { data: [], selected: null, filter: "" };
+  function todayISO(){
+    const d = new Date();
+    // local date (not UTC)
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const day = String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${day}`;
+  }
 
-    function renderStandings(){
-      const el = document.getElementById("standings");
-      el.innerHTML = "";
+  function renderUpcoming(){
+    const { hitOwnerByKey, bombKeys } = buildLookupsFromAPI();
+    const tISO = todayISO();
 
-      const q = STATE.filter.toLowerCase().trim();
-      const list = STATE.data.filter(p => !q || p.player.toLowerCase().includes(q));
+    // filter ONLY unreleased (release date >= today)
+    let upcoming = MOVIES
+      .filter(m => m.releaseISO && m.releaseISO >= tISO)
+      .map(m => {
+        const k = normKey(m.key || m.title);
+        const hitOwner = hitOwnerByKey.get(k);
 
-      document.getElementById("fbo-count").textContent = `${STATE.data.length} players`;
-      document.getElementById("standings-meta").textContent = q ? `${list.length} shown` : "";
+        // priority: hit > bomb > unknown (but unknown still allowed if unreleased)
+        let kind = "unknown";
+        if (hitOwner) kind = "hit";
+        else if (bombKeys.has(k)) kind = "bomb";
+        else kind = "unknown";
 
-      list.forEach((p, idx) => {
-        const row = document.createElement("div");
-        row.className = "row" + (STATE.selected && STATE.selected.player === p.player ? " active" : "");
-        row.onclick = () => { STATE.selected = p; renderStandings(); renderDetail(); };
-
-        const left = document.createElement("div");
-        left.className = "who";
-        left.innerHTML = `<div class="name">#${p.rank} ${p.player}</div>
-                          <div class="mini">Hits: ${p.hitsCount} · Bombs: ${p.bombsCount}</div>`;
-        const right = document.createElement("div");
-        right.className = "score";
-        right.textContent = money(p.total);
-
-        row.appendChild(left);
-        row.appendChild(right);
-        el.appendChild(row);
+        return {
+          ...m,
+          kind: (kind === "unknown" ? "bomb" : kind), // you said show bomb or owner; if unknown, treat as bomb exposure by default
+          owner: hitOwner || ""
+        };
       });
+
+    // sort by release date ascending
+    upcoming.sort((a,b) => (a.releaseISO||"").localeCompare(b.releaseISO||""));
+
+    els.upcoming.innerHTML = "";
+    els.upcomingCount.textContent = `${upcoming.length} movies`;
+    els.upcomingSub.textContent = "Scroll → to view upcoming releases";
+
+    if (!upcoming.length){
+      els.upcoming.appendChild(Object.assign(document.createElement("div"), {
+        className: "empty",
+        textContent: "No unreleased movies found. Make sure MOVIES has Release Date values and they’re real dates."
+      }));
+      return;
     }
 
-    function renderDetail(){
-      const el = document.getElementById("detail");
-      el.innerHTML = "";
-      const p = STATE.selected;
+    upcoming.forEach(m => els.upcoming.appendChild(upcomingRow(m)));
+  }
 
-      if (!p){
-        el.innerHTML = `<div class="hint">Pick someone on the left to view their hits + bomb exposure.</div>`;
-        document.getElementById("detail-rank").textContent = "";
-        return;
-      }
+  function renderStandings(){
+    const q = els.search.value.trim().toLowerCase();
+    const list = API
+      .filter(p => !q || p.player.toLowerCase().includes(q))
+      .sort((a,b)=> Number(b.total||0) - Number(a.total||0));
 
-      document.getElementById("detail-rank").textContent = `#${p.rank}`;
+    els.standings.innerHTML = "";
+    els.standingsCount.textContent = `${list.length} players`;
+    els.playerCountChip.textContent = `${list.length} players`;
 
-      const top = document.createElement("div");
-      top.className = "detailTop";
-      top.innerHTML = `
-        <div>
-          <div class="detailName">${p.player}</div>
-          <div class="detailMeta">Hits earn full profit. Bomb exposure is split evenly.</div>
-        </div>
-        <div class="bigScore">${money(p.total)}</div>
-      `;
-      el.appendChild(top);
+    list.forEach((p, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "rowBtn";
+      btn.type = "button";
+      btn.onclick = () => selectPlayer(p.player);
 
-      // Hits
-      const hitsWrap = document.createElement("div");
-      hitsWrap.className = "section";
-      hitsWrap.innerHTML = `<div class="label">Hits</div>`;
-      const hitsGrid = document.createElement("div");
-      hitsGrid.className = "posterGrid";
-      p.hits.forEach((m, i) => {
-        hitsGrid.appendChild(buildCard(m.title, m.poster, `Pick #${i+1}`));
-      });
-      hitsWrap.appendChild(hitsGrid);
-      el.appendChild(hitsWrap);
+      const left = document.createElement("div");
+      left.innerHTML = `<div class="rank">#${idx+1}</div><div class="name">${p.player}</div>`;
 
-      // Bomb exposure
-      const bombsWrap = document.createElement("div");
-      bombsWrap.className = "section";
-      bombsWrap.innerHTML = `<div class="label">Bomb exposure (${p.bombShareLabel})</div>`;
-      const bombsGrid = document.createElement("div");
-      bombsGrid.className = "posterGrid";
-      p.bombs.forEach((m, i) => {
-        bombsGrid.appendChild(buildCard(m.title, m.poster, `Exposure #${i+1}`));
-      });
-      bombsWrap.appendChild(bombsGrid);
-      el.appendChild(bombsWrap);
+      const v = Number(p.total||0);
+      const right = document.createElement("div");
+      right.className = "score " + (v < 0 ? "neg" : (v > 0 ? "pos" : ""));
+      right.textContent = fmtMoney(v);
+
+      btn.appendChild(left);
+      btn.appendChild(right);
+      els.standings.appendChild(btn);
+    });
+  }
+
+  function selectPlayer(name){
+    selectedPlayer = name;
+    const p = API.find(x => x.player === name);
+    if (!p) return;
+
+    els.detailName.textContent = p.player;
+    els.detailHint.textContent = "Hits + bomb exposure";
+    els.detailTotal.textContent = `Total: ${fmtMoney(p.total || 0)}`;
+
+    els.detailEmpty.style.display = "none";
+    els.detailContent.style.display = "block";
+    els.hits.innerHTML = "";
+    els.bombs.innerHTML = "";
+
+    for (let i=1;i<=3;i++){
+      if (safeStr(p[`hit${i}`])) els.hits.appendChild(posterCard(p[`hit${i}`], p[`hit${i}_poster`]));
+    }
+    for (let i=1;i<=6;i++){
+      if (safeStr(p[`bomb${i}`])) els.bombs.appendChild(posterCard(p[`bomb${i}`], p[`bomb${i}_poster`]));
+    }
+  }
+
+  function clearSelection(){
+    selectedPlayer = null;
+    els.detailName.textContent = "Select a player";
+    els.detailHint.textContent = "Their roster will appear here.";
+    els.detailTotal.textContent = "—";
+    els.detailContent.style.display = "none";
+    els.detailEmpty.style.display = "block";
+  }
+
+  async function loadAPI(){
+    const url = API_CSV_URL + (API_CSV_URL.includes("?") ? "&" : "?") + "cb=" + Date.now();
+    const r = await fetch(url, { cache: "no-store" });
+    const csv = await r.text();
+
+    const rows = parseCSV(csv);
+    const header = (rows[0] || []).map(h => safeStr(h));
+    if ((header[0] || "").toLowerCase() !== "player"){
+      throw new Error(`API CSV header missing "player". Found: ${header.slice(0,6).join(", ")}`);
     }
 
-    // ---------- Data load ----------
-    function normalizeHeader(h){
-      return (h || "").trim().toLowerCase();
-    }
-
-    function rowObjFrom(header, row){
+    API = rows.slice(1).filter(r => r.some(x => safeStr(x))).map(r => {
       const o = {};
-      header.forEach((h, i) => o[h] = (row[i] ?? "").toString().trim());
+      header.forEach((h,i) => o[h] = safeStr(r[i] ?? ""));
+      o.player = o.player || "";
+      o.total = Number(o.total || 0);
       return o;
+    });
+  }
+
+  function parseDateToISO(s){
+    const v = safeStr(s);
+    if (!v) return "";
+    if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+
+    const m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m){
+      const mm = m[1].padStart(2,"0");
+      const dd = m[2].padStart(2,"0");
+      return `${m[3]}-${mm}-${dd}`;
+    }
+    return "";
+  }
+
+  function shortMonthDay(iso){
+    if (!iso) return "";
+    const [y,m,d] = iso.split("-").map(Number);
+    const dt = new Date(Date.UTC(y, (m||1)-1, d||1));
+    return dt.toLocaleString(undefined, { month:"short", day:"numeric" });
+  }
+
+  async function loadMovies(){
+    const url = MOVIES_CSV_URL + (MOVIES_CSV_URL.includes("?") ? "&" : "?") + "cb=" + Date.now();
+    const r = await fetch(url, { cache: "no-store" });
+    const csv = await r.text();
+
+    const rows = parseCSV(csv);
+    const header = (rows[0] || []).map(h => safeStr(h).toLowerCase());
+
+    const idx = (name) => header.indexOf(name);
+
+    const iMovie = idx("movie");
+    const iPoster = idx("poster url");
+    const iRelease = idx("release date");
+    const iProfit = idx("profit to date");
+    const iKey = idx("key");
+
+    if (iMovie === -1){
+      throw new Error(`MOVIES CSV must include a "Movie" column. Found: ${header.slice(0,8).join(", ")}`);
     }
 
-    function extractMovies(o, prefix, count){
-      const arr = [];
-      for (let i=1;i<=count;i++){
-        const t = safeStr(o[`${prefix}${i}`]);
-        const p = safeStr(o[`${prefix}${i}_poster`]);
-        if (t) arr.push({ title: t, poster: p });
+    MOVIES = rows.slice(1).filter(r => safeStr(r[iMovie])).map(r => {
+      const title = safeStr(r[iMovie]);
+      const posterUrl = iPoster >= 0 ? safeStr(r[iPoster]) : "";
+      const releaseRaw = iRelease >= 0 ? safeStr(r[iRelease]) : "";
+      const releaseISO = parseDateToISO(releaseRaw);
+      const releaseShort = shortMonthDay(releaseISO);
+      const profit = iProfit >= 0 ? Number((r[iProfit] ?? "0").toString().replace(/[$,]/g,"")) || 0 : 0;
+      const key = iKey >= 0 ? safeStr(r[iKey]) : title;
+
+      return { title, posterUrl, releaseISO, releaseShort, profit, key };
+    });
+  }
+
+  async function build(){
+    try{
+      if (API_CSV_URL.includes("PASTE_") || MOVIES_CSV_URL.includes("PASTE_")){
+        throw new Error("Paste your API_CSV_URL and MOVIES_CSV_URL at the top of the script.");
       }
-      return arr;
-    }
 
-    async function build(){
-      const debugEl = document.getElementById("fbo-debug");
-      debugEl.style.display = "none";
-      debugEl.textContent = "";
+      await Promise.all([loadAPI(), loadMovies()]);
 
-      const url = SHEET_CSV_URL + (SHEET_CSV_URL.includes("?") ? "&" : "?") + "cb=" + Date.now();
+      els.updatedChip.textContent = "Updated: " + new Date().toLocaleString();
 
-      try{
-        const res = await fetch(url, { cache: "no-store" });
-        const text = await res.text();
-
-        if (text.trim().startsWith("<")) {
-          throw new Error("Your CSV URL returned HTML (not CSV). Re-publish the API tab to web as CSV.");
-        }
-
-        const rows = parseCSV(text);
-        if (!rows || rows.length < 2) {
-          throw new Error("CSV loaded but has no data rows.");
-        }
-
-        const header = rows[0].map(normalizeHeader);
-        const dataRows = rows.slice(1).filter(r => r.some(x => (x||"").trim() !== ""));
-
-        // required columns sanity
-        if (!header.includes("player")) {
-          throw new Error(`CSV header missing "player". Found: ${header.join(", ")}`);
-        }
-
-        let players = dataRows.map(r => rowObjFrom(header, r))
-          .map(o => {
-            const hits = extractMovies(o, "hit", 3);
-            const bombs = extractMovies(o, "bomb", 6);
-            const total = Number(o.total || 0);
-            const hitsCount = hits.length;
-            const bombsCount = bombs.length;
-            const bombShareLabel = bombsCount ? `1/${bombsCount} each` : "—";
-            return {
-              player: safeStr(o.player),
-              total,
-              hit_points: Number(o.hit_points || 0),
-              bomb_points: Number(o.bomb_points || 0),
-              hits, bombs, hitsCount, bombsCount, bombShareLabel
-            };
-          })
-          .filter(p => p.player);
-
-        players.sort((a,b) => Number(b.total||0) - Number(a.total||0));
-        players = players.map((p, i) => ({...p, rank: i+1}));
-
-        STATE.data = players;
-
-        document.getElementById("fbo-updated").textContent = "Updated: " + new Date().toLocaleString();
-        renderStandings();
-        renderDetail();
-
-      } catch(err){
-        console.error(err);
-        document.getElementById("fbo-updated").textContent = "Updated: —";
-        document.getElementById("fbo-count").textContent = "0 players";
-        document.getElementById("standings").innerHTML = "";
-        document.getElementById("detail").innerHTML = `<div class="hint">Couldn’t load data. Try Refresh now.</div>`;
-
-        debugEl.style.display = "block";
-        debugEl.textContent =
-          "Data load error:\n" +
-          (err && err.message ? err.message : String(err)) +
-          "\n\nTip: open the CSV URL directly and confirm it shows comma-separated text with headers + rows.";
-      }
-    }
-
-    // UI events
-    document.getElementById("search").addEventListener("input", (e)=>{
-      STATE.filter = e.target.value || "";
+      renderUpcoming();
       renderStandings();
-    });
+      if (selectedPlayer) selectPlayer(selectedPlayer);
+    } catch (e){
+      els.updatedChip.textContent = "Updated: —";
+      els.playerCountChip.textContent = "0 players";
+      els.standingsCount.textContent = "0 players";
+      els.upcomingSub.textContent = "Error loading data";
 
-    document.getElementById("btn-clear").addEventListener("click", ()=>{
-      STATE.selected = null;
-      renderStandings();
-      renderDetail();
-    });
+      els.upcoming.innerHTML = `<div class="empty" style="border-color: rgba(239,68,68,.35); color: rgba(255,255,255,.75); min-width: 100%">
+        <div style="color: rgba(239,68,68,.95); font-weight: 700; margin-bottom:6px">Data load error:</div>
+        ${safeStr(e.message)}
+        <div style="margin-top:10px; color: rgba(255,255,255,.5)">Tip: open each CSV URL directly and confirm it shows headers + rows.</div>
+      </div>`;
 
-    document.getElementById("btn-refresh").addEventListener("click", ()=>{
-      build();
-    });
+      els.standings.innerHTML = "";
+      clearSelection();
+    }
+  }
 
-    // boot + auto refresh
-    build();
-    setInterval(build, 30000);
-  </script>
+  els.search.addEventListener("input", renderStandings);
+  els.refreshBtn.addEventListener("click", build);
+  els.clearBtn.addEventListener("click", clearSelection);
+
+  clearSelection();
+  build();
+  setInterval(build, REFRESH_MS);
+</script>
 </body>
 </html>
