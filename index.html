@@ -1,91 +1,872 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Fantasy Box Office League</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-</head>
-<body>
-
-<div id="app"></div>
-
-<script>
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/16jfz5_VxPn4AYs1riL9rwTlX9AtvWGXe8D8K-XG87i0/gviz/tq?tqx=out:csv&sheet=API";
-
-function parseCSV(text){
-  const rows=[], row=[], cur={v:""}, out=[];
-  let inQ=false;
-  for(let i=0;i<text.length;i++){
-    const c=text[i], n=text[i+1];
-    if(c=='"' && inQ && n=='"'){ cur.v+='"'; i++; continue; }
-    if(c=='"'){ inQ=!inQ; continue; }
-    if(c==',' && !inQ){ row.push(cur.v); cur.v=""; continue; }
-    if((c=='\n'||c=='\r') && !inQ){
-      if(c=='\r' && n=='\n') i++;
-      row.push(cur.v); out.push(row.splice(0)); cur.v=""; continue;
+  <meta name="color-scheme" content="dark" />
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --card:#0E1730cc;
+      --card2:#0E1730f2;
+      --line:#1E2B52;
+      --muted:#98A2C7;
+      --text:#EAF0FF;
+      --accent:#7C5CFF;
+      --accent2:#29D3FF;
+      --good:#4ADE80;
+      --bad:#FF4D6D;
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --r: 22px;
     }
-    cur.v+=c;
-  }
-  row.push(cur.v); out.push(row);
-  return out.filter(r=>r.some(x=>x!==""));
-}
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background:
+        radial-gradient(1200px 700px at 18% 10%, rgba(124,92,255,.18), transparent 60%),
+        radial-gradient(900px 600px at 80% 18%, rgba(41,211,255,.12), transparent 55%),
+        radial-gradient(1000px 700px at 65% 85%, rgba(255,77,109,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      color:var(--text);
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 28px 18px 46px;
+    }
 
-function money(n){
-  const v=Number(n||0), a=Math.abs(v), s=v<0?"-":"";
-  if(a>=1e9) return s+"$"+(a/1e9).toFixed(2)+"B";
-  if(a>=1e6) return s+"$"+(a/1e6).toFixed(1)+"M";
-  if(a>=1e3) return s+"$"+(a/1e3).toFixed(1)+"K";
-  return s+"$"+a.toFixed(0);
-}
+    .hero{
+      position:relative;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: calc(var(--r) + 10px);
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      background:
+        radial-gradient(900px 400px at 15% 0%, rgba(124,92,255,.22), transparent 60%),
+        radial-gradient(700px 380px at 75% 10%, rgba(41,211,255,.15), transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    }
+    .hero::after{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        linear-gradient(115deg, rgba(124,92,255,.20), transparent 35%),
+        linear-gradient(300deg, rgba(41,211,255,.12), transparent 38%),
+        radial-gradient(1100px 500px at 50% 0%, rgba(255,255,255,.08), transparent 55%);
+      pointer-events:none;
+      mix-blend-mode:screen;
+      opacity:.8;
+    }
+    .hero-inner{
+      position:relative;
+      padding: 22px 22px 18px;
+      z-index:1;
+    }
+    .kicker{
+      display:flex; gap:10px; flex-wrap:wrap;
+      align-items:center;
+      font-size:12px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color: rgba(234,240,255,.72);
+    }
+    .dot{
+      width:6px;height:6px;border-radius:999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 22px rgba(124,92,255,.35);
+    }
+    h1{
+      margin: 10px 0 8px;
+      font-size: 36px;
+      letter-spacing:-.02em;
+    }
+    .sub{
+      margin: 0 0 16px;
+      color: rgba(234,240,255,.72);
+      line-height:1.45;
+      max-width: 72ch;
+      font-size: 14px;
+    }
+    .meta-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      padding-top: 10px;
+      border-top:1px solid rgba(255,255,255,.08);
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 999px;
+      background: rgba(7,10,18,.40);
+      backdrop-filter: blur(10px);
+      color: rgba(234,240,255,.78);
+      font-size: 13px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .pill strong{color:var(--text); font-weight:700}
+    .pill .mini{
+      width:8px;height:8px;border-radius:999px;
+      background: rgba(74,222,128,.9);
+      box-shadow: 0 0 12px rgba(74,222,128,.35);
+      opacity:.9;
+    }
+    .pill small{opacity:.75}
+    .btn{
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: rgba(234,240,255,.92);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      display:inline-flex; align-items:center; gap:8px;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.16)}
+    .btn:active{transform: translateY(0)}
+    .grid{
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (max-width: 960px){
+      .grid{grid-template-columns: 1fr; }
+    }
 
-function build(){
-  const url = SHEET_CSV_URL + "&cb=" + Date.now();
+    .panel{
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: var(--r);
+      background: rgba(7,10,18,.36);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(12px);
+    }
+    .panel-h{
+      padding: 14px 14px 12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .panel-h h2{
+      margin:0;
+      font-size: 14px;
+      letter-spacing:.02em;
+      color: rgba(234,240,255,.90);
+    }
+    .panel-h p{
+      margin:0;
+      font-size: 12px;
+      color: rgba(234,240,255,.60);
+    }
 
-  fetch(url, { cache:"no-store" })
-    .then(r=>r.text())
-    .then(csv=>{
-      const rows=parseCSV(csv);
-      const header=rows[0].map(h=>h.trim());
-      const data=rows.slice(1).map(r=>{
-        const o={};
-        header.forEach((h,i)=>o[h]=(r[i]||"").trim());
-        return o;
+    /* standings */
+    .standings{
+      padding: 10px;
+    }
+    .search{
+      display:flex; gap:10px;
+      padding: 10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    input[type="search"]{
+      width:100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.10);
+      outline:none;
+      background: rgba(255,255,255,.04);
+      color: rgba(234,240,255,.92);
+      font-size: 13px;
+    }
+    input[type="search"]::placeholder{color: rgba(234,240,255,.45)}
+    .row{
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding: 12px 12px;
+      border-radius: 16px;
+      cursor:pointer;
+      transition: background .12s ease, transform .12s ease, border-color .12s ease;
+      border:1px solid transparent;
+    }
+    .row:hover{
+      background: rgba(255,255,255,.04);
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.10);
+    }
+    .row.active{
+      background: linear-gradient(90deg, rgba(124,92,255,.18), rgba(41,211,255,.08));
+      border-color: rgba(124,92,255,.30);
+    }
+    .lhs{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+    .rank{
+      width:28px;height:28px;
+      border-radius: 10px;
+      display:flex;align-items:center;justify-content:center;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+      color: rgba(234,240,255,.78);
+      font-size:12px;
+      flex:0 0 auto;
+    }
+    .name{
+      font-weight: 700;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .subname{
+      font-size: 12px;
+      color: rgba(234,240,255,.55);
+      margin-top:2px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .rhs{
+      text-align:right;
+      flex: 0 0 auto;
+    }
+    .score{
+      font-weight: 800;
+      letter-spacing:.01em;
+      font-variant-numeric: tabular-nums;
+    }
+    .delta{
+      font-size: 12px;
+      color: rgba(234,240,255,.60);
+      margin-top:2px;
+    }
+
+    /* detail */
+    .detail{
+      padding: 14px;
+    }
+    .detail-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .who{
+      display:flex; flex-direction:column; gap:6px;
+      min-width: 240px;
+    }
+    .who h3{
+      margin:0;
+      font-size: 20px;
+      letter-spacing:-.01em;
+    }
+    .who .note{
+      margin:0;
+      font-size: 13px;
+      color: rgba(234,240,255,.62);
+    }
+    .chips{display:flex; gap:10px; flex-wrap:wrap}
+    .chip{
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      font-size: 12px;
+      color: rgba(234,240,255,.70);
+      display:inline-flex; gap:8px; align-items:center;
+      font-variant-numeric: tabular-nums;
+    }
+    .chip b{color: rgba(234,240,255,.95)}
+    .chip .tag{
+      width:8px;height:8px;border-radius:999px;
+      background: rgba(124,92,255,.85);
+      box-shadow: 0 0 12px rgba(124,92,255,.25);
+    }
+    .chip .tag2{
+      background: rgba(255,77,109,.85);
+      box-shadow: 0 0 12px rgba(255,77,109,.22);
+    }
+
+    .cards{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    @media (max-width: 1120px){
+      .cards{grid-template-columns: repeat(2, minmax(0,1fr));}
+    }
+    @media (max-width: 640px){
+      .cards{grid-template-columns: 1fr;}
+    }
+
+    .movie-card{
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: 18px;
+      overflow:hidden;
+      background: rgba(14,23,48,.45);
+      box-shadow: 0 16px 45px rgba(0,0,0,.35);
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .movie-card:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.14);
+      background: rgba(14,23,48,.60);
+    }
+    .poster{
+      width:100%;
+      aspect-ratio: 2 / 3;
+      background:
+        radial-gradient(500px 240px at 50% 0%, rgba(255,255,255,.12), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      display:flex; align-items:center; justify-content:center;
+      position:relative;
+    }
+    .poster img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+      filter: contrast(1.02) saturate(1.02);
+    }
+    .poster .fallback{
+      padding: 18px;
+      text-align:center;
+      color: rgba(234,240,255,.65);
+      font-size: 12px;
+      line-height:1.35;
+    }
+    .mc-body{
+      padding: 12px 12px 12px;
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .mc-title{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    }
+    .mc-title h4{
+      margin:0;
+      font-size: 14px;
+      line-height:1.25;
+      letter-spacing:-.01em;
+      flex:1;
+    }
+    .badge{
+      flex:0 0 auto;
+      font-size: 11px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: rgba(234,240,255,.72);
+      text-transform: uppercase;
+      letter-spacing:.12em;
+    }
+    .badge.hit{
+      border-color: rgba(74,222,128,.30);
+      background: rgba(74,222,128,.10);
+    }
+    .badge.bomb{
+      border-color: rgba(255,77,109,.30);
+      background: rgba(255,77,109,.10);
+    }
+    .mc-metrics{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      font-size: 12px;
+      color: rgba(234,240,255,.70);
+      font-variant-numeric: tabular-nums;
+    }
+    .mc-metrics .value{
+      color: rgba(234,240,255,.95);
+      font-weight: 800;
+    }
+    .muted{color: rgba(234,240,255,.55)}
+    .footer{
+      margin-top: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      color: rgba(234,240,255,.55);
+      font-size: 12px;
+    }
+    .tiny{
+      opacity:.8;
+      font-variant-numeric: tabular-nums;
+    }
+    .error{
+      margin: 12px 0 0;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,77,109,.35);
+      background: rgba(255,77,109,.10);
+      color: rgba(234,240,255,.90);
+      font-size: 13px;
+      display:none;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div class="hero-inner">
+        <div class="kicker"><span class="dot"></span> Q1 • Split bombs • Live standings</div>
+        <h1>Fantasy Box Office League</h1>
+        <p class="sub">
+          Scores update from your Google Sheet. Hits earn their own profit. Bombs are split across opponents (negative exposure).
+        </p>
+        <div class="meta-row">
+          <div class="pill"><span class="mini"></span><strong id="fbo-status">Live</strong> <small id="fbo-updated" class="tiny">Updated: —</small></div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn" id="btn-refresh" type="button">⟲ Refresh now</button>
+            <button class="btn" id="btn-clear" type="button">✕ Clear selection</button>
+          </div>
+        </div>
+        <div class="error" id="fbo-error"></div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-h">
+          <div>
+            <h2>Standings</h2>
+            <p>Tap a player to expand</p>
+          </div>
+          <div class="tiny" id="count">—</div>
+        </div>
+        <div class="search">
+          <input id="q" type="search" placeholder="Search players…" autocomplete="off" />
+        </div>
+        <div class="standings" id="standings"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h">
+          <div>
+            <h2 id="detail-title">Select a player</h2>
+            <p id="detail-sub">Their roster will appear here.</p>
+          </div>
+          <div class="tiny" id="detail-score">—</div>
+        </div>
+        <div class="detail" id="detail">
+          <div class="muted" style="padding: 10px 2px;">
+            Pick someone on the left to view their hits + bomb exposure.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div>Hosted on GitHub Pages • Dark / Cinematic theme</div>
+      <div class="tiny">Auto-refresh: every 30s • Cache-bust enabled</div>
+    </div>
+  </div>
+
+  <script>
+    /**********************************************************************
+     * 1) SET THIS
+     * Publish your API sheet as CSV, then paste that CSV URL here.
+     *
+     * You want a URL that returns raw CSV, like:
+     * https://docs.google.com/spreadsheets/d/e/<PUBLISHED_ID>/pub?gid=<GID>&single=true&output=csv
+     **********************************************************************/
+    const SHEET_CSV_URL = "PASTE_YOUR_API_CSV_URL_HERE";
+
+    /**********************************************************************
+     * Expecting API headers like:
+     * player,total,hit1,hit1_poster,hit2,hit2_poster,hit3,hit3_poster,
+     * bomb1,bomb1_poster,... bomb6,bomb6_poster,hit_points (optional)
+     *
+     * This file is resilient: if a column is missing, it gracefully blanks.
+     **********************************************************************/
+
+    const $ = (id) => document.getElementById(id);
+
+    function fmtMoney(n){
+      const v = Number(n || 0);
+      const sign = v < 0 ? "−" : "";
+      const abs = Math.abs(v);
+      if (abs >= 1e9) return sign + "$" + (abs/1e9).toFixed(2) + "B";
+      if (abs >= 1e6) return sign + "$" + (abs/1e6).toFixed(1) + "M";
+      if (abs >= 1e3) return sign + "$" + (abs/1e3).toFixed(1) + "K";
+      return sign + "$" + abs.toFixed(0);
+    }
+    function fmtNum(n){
+      const v = Number(n || 0);
+      return (Math.round(v*100)/100).toLocaleString(undefined, { maximumFractionDigits: 2 });
+    }
+    function safeStr(x){ return (x ?? "").toString(); }
+    function safeImg(url){
+      const u = safeStr(url).trim();
+      return u || "";
+    }
+
+    // Simple CSV parser (handles quotes + commas)
+    function parseCSV(text){
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let inQuotes = false;
+
+      for (let i=0; i<text.length; i++){
+        const c = text[i];
+        const next = text[i+1];
+
+        if (c === '"' ){
+          if (inQuotes && next === '"'){ cell += '"'; i++; }
+          else { inQuotes = !inQuotes; }
+        } else if (c === "," && !inQuotes){
+          row.push(cell);
+          cell = "";
+        } else if ((c === "\n" || c === "\r") && !inQuotes){
+          if (c === "\r" && next === "\n") i++;
+          row.push(cell);
+          rows.push(row);
+          row = [];
+          cell = "";
+        } else {
+          cell += c;
+        }
+      }
+      // final cell
+      if (cell.length || row.length){
+        row.push(cell);
+        rows.push(row);
+      }
+      return rows.filter(r => r.some(v => safeStr(v).trim() !== ""));
+    }
+
+    let STATE = {
+      all: [],
+      filtered: [],
+      selected: null
+    };
+
+    function getField(obj, name){
+      return obj[name] ?? obj[name.toLowerCase()] ?? obj[name.toUpperCase()] ?? "";
+    }
+    function numField(obj, name){
+      const v = getField(obj, name);
+      const n = Number(safeStr(v).replace(/[^0-9.\-]/g,""));
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function buildFromData(data){
+      // sort standings by total desc
+      data.sort((a,b) => numField(b,"total") - numField(a,"total"));
+
+      STATE.all = data;
+      applyFilter();
+      // If selected player no longer exists, clear selection
+      if (STATE.selected){
+        const still = STATE.all.find(r => safeStr(getField(r,"player")) === STATE.selected);
+        if (!still) STATE.selected = null;
+      }
+      render();
+    }
+
+    function applyFilter(){
+      const q = safeStr($("q").value).trim().toLowerCase();
+      if (!q){
+        STATE.filtered = [...STATE.all];
+      } else {
+        STATE.filtered = STATE.all.filter(r => safeStr(getField(r,"player")).toLowerCase().includes(q));
+      }
+    }
+
+    function render(){
+      renderStandings();
+      renderDetail();
+    }
+
+    function renderStandings(){
+      const el = $("standings");
+      el.innerHTML = "";
+      $("count").textContent = `${STATE.filtered.length} players`;
+
+      STATE.filtered.forEach((r, idx) => {
+        const player = safeStr(getField(r,"player")).trim();
+        const total = numField(r,"total");
+
+        const row = document.createElement("div");
+        row.className = "row" + (STATE.selected === player ? " active" : "");
+        row.onclick = () => {
+          STATE.selected = player;
+          render();
+        };
+
+        const left = document.createElement("div");
+        left.className = "lhs";
+
+        const rank = document.createElement("div");
+        rank.className = "rank";
+        rank.textContent = String(idx + 1);
+
+        const text = document.createElement("div");
+        text.style.minWidth = "0";
+
+        const nm = document.createElement("div");
+        nm.className = "name";
+        nm.textContent = player || "—";
+
+        const sm = document.createElement("div");
+        sm.className = "subname";
+        const hp = getField(r,"hit_points");
+        sm.textContent = hp !== "" ? `Hits points: ${fmtNum(hp)}` : "Tap to view roster";
+
+        text.appendChild(nm);
+        text.appendChild(sm);
+
+        left.appendChild(rank);
+        left.appendChild(text);
+
+        const right = document.createElement("div");
+        right.className = "rhs";
+
+        const score = document.createElement("div");
+        score.className = "score";
+        score.textContent = fmtMoney(total);
+
+        const delta = document.createElement("div");
+        delta.className = "delta";
+        delta.textContent = total >= 0 ? "In the green" : "In the red";
+
+        right.appendChild(score);
+        right.appendChild(delta);
+
+        row.appendChild(left);
+        row.appendChild(right);
+
+        el.appendChild(row);
       });
+    }
 
-      data.sort((a,b)=>Number(b.total||0)-Number(a.total||0));
+    function rosterCards(rowObj){
+      // hits 1..3, bombs 1..6 (if present)
+      const cards = [];
 
-      let html = `<h1>Fantasy Box Office League</h1><p>Updated: ${new Date().toLocaleString()}</p><hr>`;
+      for (let i=1; i<=3; i++){
+        const title = safeStr(getField(rowObj, `hit${i}`)).trim();
+        const poster = safeImg(getField(rowObj, `hit${i}_poster`));
+        if (!title) continue;
+        cards.push({
+          kind: "Hit",
+          title,
+          poster,
+          points: null
+        });
+      }
 
-      data.forEach((p,i)=>{
-        html += `
-          <h2>#${i+1} ${p.player} — ${money(p.total)}</h2>
-          <strong>Hits:</strong><br>
-          <img src="${p.hit1_poster}" width="120">
-          <img src="${p.hit2_poster}" width="120">
-          <img src="${p.hit3_poster}" width="120">
-          <br><br>
-          <strong>Bomb Exposure (1/6 each):</strong><br>
-          <img src="${p.bomb1_poster}" width="90">
-          <img src="${p.bomb2_poster}" width="90">
-          <img src="${p.bomb3_poster}" width="90">
-          <img src="${p.bomb4_poster}" width="90">
-          <img src="${p.bomb5_poster}" width="90">
-          <img src="${p.bomb6_poster}" width="90">
-          <hr>
-        `;
-      });
+      for (let i=1; i<=6; i++){
+        const title = safeStr(getField(rowObj, `bomb${i}`)).trim();
+        const poster = safeImg(getField(rowObj, `bomb${i}_poster`));
+        if (!title) continue;
+        cards.push({
+          kind: "Bomb Exposure",
+          title,
+          poster,
+          points: null
+        });
+      }
 
-      document.getElementById("app").innerHTML = html;
-    })
-    .catch(e=>{
-      document.getElementById("app").innerHTML = "Error loading data.";
-      console.error(e);
-    });
-}
+      return cards;
+    }
 
-build();
-setInterval(build, 30000); // auto-refresh every 30 seconds
-</script>
+    function renderDetail(){
+      const container = $("detail");
+      const title = $("detail-title");
+      const sub = $("detail-sub");
+      const score = $("detail-score");
 
+      if (!STATE.selected){
+        title.textContent = "Select a player";
+        sub.textContent = "Their roster will appear here.";
+        score.textContent = "—";
+        container.innerHTML = `<div class="muted" style="padding: 10px 2px;">
+          Pick someone on the left to view their hits + bomb exposure.
+        </div>`;
+        return;
+      }
+
+      const rowObj = STATE.all.find(r => safeStr(getField(r,"player")) === STATE.selected);
+      if (!rowObj){
+        STATE.selected = null;
+        renderDetail();
+        return;
+      }
+
+      const player = safeStr(getField(rowObj,"player")).trim();
+      const total = numField(rowObj,"total");
+
+      title.textContent = player;
+      sub.textContent = "Hits + bomb exposure";
+      score.textContent = fmtMoney(total);
+
+      const hitsCount = [1,2,3].map(i => safeStr(getField(rowObj,`hit${i}`)).trim()).filter(Boolean).length;
+      const bombsCount = [1,2,3,4,5,6].map(i => safeStr(getField(rowObj,`bomb${i}`)).trim()).filter(Boolean).length;
+
+      const top = document.createElement("div");
+      top.className = "detail-top";
+
+      const who = document.createElement("div");
+      who.className = "who";
+      who.innerHTML = `
+        <h3>${player}</h3>
+        <p class="note">Total (net): <b>${fmtMoney(total)}</b></p>
+      `;
+
+      const chips = document.createElement("div");
+      chips.className = "chips";
+      chips.innerHTML = `
+        <span class="chip"><span class="tag"></span> Hits: <b>${hitsCount}</b></span>
+        <span class="chip"><span class="tag tag2"></span> Bomb exposure: <b>${bombsCount}</b></span>
+      `;
+
+      top.appendChild(who);
+      top.appendChild(chips);
+
+      const cardsWrap = document.createElement("div");
+      cardsWrap.className = "cards";
+
+      const cards = rosterCards(rowObj);
+      if (!cards.length){
+        cardsWrap.innerHTML = `<div class="muted">No roster data found in API for this player.</div>`;
+      } else {
+        cards.forEach(c => {
+          const card = document.createElement("div");
+          card.className = "movie-card";
+
+          const poster = document.createElement("div");
+          poster.className = "poster";
+
+          const imgUrl = safeImg(c.poster);
+          if (imgUrl){
+            const img = document.createElement("img");
+            img.loading = "lazy";
+            img.src = imgUrl;
+            img.alt = c.title;
+            img.onerror = () => {
+              poster.innerHTML = `<div class="fallback">Poster unavailable</div>`;
+            };
+            poster.appendChild(img);
+          } else {
+            poster.innerHTML = `<div class="fallback">Poster unavailable</div>`;
+          }
+
+          const body = document.createElement("div");
+          body.className = "mc-body";
+
+          const t = document.createElement("div");
+          t.className = "mc-title";
+
+          const h = document.createElement("h4");
+          h.textContent = c.title;
+
+          const badge = document.createElement("div");
+          badge.className = "badge " + (c.kind === "Hit" ? "hit" : "bomb");
+          badge.textContent = c.kind === "Hit" ? "Hit" : "Bomb";
+
+          t.appendChild(h);
+          t.appendChild(badge);
+
+          const m = document.createElement("div");
+          m.className = "mc-metrics";
+          m.innerHTML = `<span class="muted">Source</span><span class="value">API</span>`;
+
+          body.appendChild(t);
+          body.appendChild(m);
+
+          card.appendChild(poster);
+          card.appendChild(body);
+          cardsWrap.appendChild(card);
+        });
+      }
+
+      container.innerHTML = "";
+      container.appendChild(top);
+      container.appendChild(cardsWrap);
+    }
+
+    function setError(msg){
+      const box = $("fbo-error");
+      if (!msg){
+        box.style.display = "none";
+        box.textContent = "";
+        return;
+      }
+      box.style.display = "block";
+      box.textContent = msg;
+    }
+
+    async function build(){
+      if (!SHEET_CSV_URL || SHEET_CSV_URL.includes("PASTE_YOUR_API_CSV_URL_HERE")){
+        $("fbo-status").textContent = "Needs CSV URL";
+        setError(
+          "Paste your published API CSV URL into SHEET_CSV_URL in index.html.\n\n" +
+          "Tip: Publish the API sheet as CSV and use a URL ending with output=csv."
+        );
+        return;
+      }
+
+      const url = SHEET_CSV_URL + (SHEET_CSV_URL.includes("?") ? "&" : "?") + "cb=" + Date.now();
+      try{
+        $("fbo-status").textContent = "Updating…";
+        setError("");
+
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
+
+        const csv = await res.text();
+        const rows = parseCSV(csv);
+        if (!rows.length) throw new Error("CSV returned no rows. Check that the sheet is published and output=csv.");
+
+        const header = rows[0].map(h => safeStr(h).trim());
+        const data = rows.slice(1).map(r => {
+          const o = {};
+          header.forEach((h,i) => o[h] = safeStr(r[i] ?? "").trim());
+          return o;
+        }).filter(o => safeStr(getField(o,"player")).trim() !== "");
+
+        buildFromData(data);
+
+        $("fbo-updated").textContent = "Updated: " + new Date().toLocaleString();
+        $("fbo-status").textContent = "Live";
+      } catch(err){
+        $("fbo-status").textContent = "Error";
+        setError(String(err && err.message ? err.message : err));
+      }
+    }
+
+    // Events
+    $("q").addEventListener("input", () => { applyFilter(); renderStandings(); });
+    $("btn-refresh").addEventListener("click", () => build());
+    $("btn-clear").addEventListener("click", () => { STATE.selected = null; render(); });
+
+    // Start
+    build();
+    setInterval(build, 30000);
+  </script>
 </body>
 </html>
