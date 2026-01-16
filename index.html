@@ -2,283 +2,89 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Fantasy Box Office League</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body>
 
-<div id="fbo-root">
-  <div class="fbo-hero">
-    <div class="fbo-hero-inner">
-      <div class="fbo-kicker">Q1 • SPLIT BOMBS • LIVE STANDINGS</div>
-      <h1 class="fbo-title">Fantasy Box Office League</h1>
-      <div class="fbo-sub">Scoring: Worldwide Gross − (2.5× Budget) • Bombs split across opponents</div>
-    </div>
-  </div>
-
-  <div class="fbo-wrap">
-    <div class="fbo-topbar">
-      <div class="fbo-pill" id="fbo-updated">Updating…</div>
-      <div class="fbo-pill">Theme: Dark / Cinematic</div>
-    </div>
-
-    <div class="fbo-grid">
-      <div class="fbo-card fbo-standings">
-        <div class="fbo-card-head">
-          <div class="fbo-card-title">Standings</div>
-          <div class="fbo-card-meta">Click a player to expand</div>
-        </div>
-        <div id="fbo-standings-list" class="fbo-standings-list"></div>
-      </div>
-
-      <div class="fbo-card fbo-detail">
-        <div class="fbo-card-head">
-          <div class="fbo-card-title" id="fbo-detail-name">Select a player</div>
-          <div class="fbo-card-meta" id="fbo-detail-meta">Their roster will appear here.</div>
-        </div>
-        <div id="fbo-detail-body" class="fbo-detail-body">
-          <div class="fbo-empty">Pick someone on the left to view their hits + bomb exposure.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<style>
-  :root{
-    --bg0:#07080b; --bg1:#0b0e14; --card:#0f1420cc; --stroke:#232a3a;
-    --txt:#e8ecf6; --muted:#a8b1c7; --good:#35d07f; --bad:#ff4d6d; --gold:#f5c84b;
-    --shadow: 0 18px 45px rgba(0,0,0,.55);
-  }
-  body{margin:0;background:#000;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-  #fbo-root{
-    color:var(--txt);
-    background:
-      radial-gradient(1200px 600px at 10% 10%, rgba(90,110,255,.20), transparent 60%),
-      radial-gradient(900px 500px at 90% 20%, rgba(245,200,75,.12), transparent 55%),
-      radial-gradient(900px 600px at 60% 90%, rgba(255,77,109,.10), transparent 60%),
-      linear-gradient(180deg, var(--bg0), var(--bg1));
-    min-height:100vh;
-  }
-  .fbo-hero{
-    padding: 42px 28px;
-    background:
-      linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.0)),
-      radial-gradient(900px 220px at 15% 20%, rgba(90,110,255,.20), transparent 60%),
-      radial-gradient(700px 240px at 70% 15%, rgba(245,200,75,.16), transparent 55%);
-    border-bottom: 1px solid var(--stroke);
-  }
-  .fbo-title{margin:10px 0 6px;font-size: 40px;letter-spacing:.3px}
-  .fbo-kicker{color:var(--muted);font-size:13px;letter-spacing:.18em;text-transform:uppercase}
-  .fbo-sub{color:var(--muted);font-size:14px;max-width: 900px}
-  .fbo-wrap{padding: 20px 20px 26px; max-width: 1200px; margin: 0 auto;}
-  .fbo-topbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-  .fbo-pill{
-    border:1px solid var(--stroke);
-    background: rgba(15,20,32,.65);
-    padding: 8px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    color: var(--muted);
-    backdrop-filter: blur(10px);
-  }
-  .fbo-grid{display:grid;grid-template-columns: 1.1fr 1.4fr;gap:14px}
-  @media (max-width: 980px){.fbo-grid{grid-template-columns:1fr}.fbo-title{font-size:32px}}
-  .fbo-card{
-    border:1px solid var(--stroke);
-    background: var(--card);
-    border-radius: 16px;
-    box-shadow: var(--shadow);
-    overflow:hidden;
-    backdrop-filter: blur(14px);
-  }
-  .fbo-card-head{
-    padding: 14px 14px 10px;
-    border-bottom:1px solid var(--stroke);
-    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0));
-  }
-  .fbo-card-title{font-size:16px;font-weight:700}
-  .fbo-card-meta{font-size:12px;color:var(--muted);margin-top:4px}
-  .fbo-standings-list{padding:8px}
-  .row{
-    display:grid;
-    grid-template-columns: 42px 1fr 120px;
-    align-items:center;
-    gap: 10px;
-    padding: 10px 10px;
-    border-radius: 12px;
-    cursor:pointer;
-    transition: transform .08s ease, background .15s ease, border-color .15s ease;
-    border:1px solid transparent;
-  }
-  .row:hover{background: rgba(255,255,255,.04);border-color: rgba(255,255,255,.08);transform: translateY(-1px)}
-  .rank{
-    width: 34px; height: 34px; border-radius: 10px;
-    display:flex; align-items:center; justify-content:center;
-    border:1px solid var(--stroke);
-    background: rgba(15,18,32,.7);
-    font-weight: 800;
-  }
-  .rank.gold{border-color: rgba(245,200,75,.45);background: rgba(245,200,75,.12);color: var(--gold);}
-  .name{font-weight:700}
-  .mini{font-size:12px;color:var(--muted);margin-top:2px}
-  .total{text-align:right;font-variant-numeric: tabular-nums;font-weight:800;letter-spacing:.2px}
-  .total.good{color: var(--good)} .total.bad{color: var(--bad)}
-  .fbo-detail-body{padding:14px}
-  .fbo-empty{color:var(--muted);padding:18px;border:1px dashed rgba(255,255,255,.18);border-radius:12px}
-  .section-title{margin:10px 0 8px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em}
-  .poster-row{display:flex;gap:10px;flex-wrap:wrap}
-  .poster{
-    width: 110px;
-    border-radius: 12px;
-    overflow:hidden;
-    border:1px solid rgba(255,255,255,.10);
-    background: rgba(255,255,255,.03);
-    position: relative;
-    box-shadow: 0 10px 25px rgba(0,0,0,.45);
-    transition: transform .12s ease, border-color .15s ease;
-  }
-  .poster:hover{transform: translateY(-2px); border-color: rgba(255,255,255,.22);}
-  .poster img{width:100%; display:block;}
-  .tag{
-    position:absolute; left:8px; top:8px;
-    font-size:11px; padding: 5px 7px;
-    border-radius: 999px;
-    background: rgba(0,0,0,.55);
-    border:1px solid rgba(255,255,255,.12);
-    color: var(--txt);
-    backdrop-filter: blur(10px);
-  }
-  .tag.bomb{background: rgba(255,77,109,.16); border-color: rgba(255,77,109,.35);}
-  .tag.hit{background: rgba(53,208,127,.14); border-color: rgba(53,208,127,.35);}
-  .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
-  .stat{border:1px solid rgba(255,255,255,.10);background: rgba(255,255,255,.03);border-radius:12px;padding:10px}
-  .stat .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em}
-  .stat .v{margin-top:6px;font-weight:800;font-variant-numeric: tabular-nums}
-</style>
+<div id="app"></div>
 
 <script>
-  const SHEET_CSV_URL =
-    "https://docs.google.com/spreadsheets/d/16jfz5_VxPn4AYs1riL9rwTlX9AtvWGXe8D8K-XG87i0/gviz/tq?tqx=out:csv&sheet=API";
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/16jfz5_VxPn4AYs1riL9rwTlX9AtvWGXe8D8K-XG87i0/gviz/tq?tqx=out:csv&sheet=API";
 
-  function parseCSV(text){
-    const rows=[]; let row=[], cur="", inQ=false;
-    for(let i=0;i<text.length;i++){
-      const ch=text[i], nx=text[i+1];
-      if(ch=='"' && inQ && nx=='"'){cur+='"'; i++; continue;}
-      if(ch=='"'){inQ=!inQ; continue;}
-      if(ch==',' && !inQ){row.push(cur); cur=""; continue;}
-      if((ch=='\n'||ch=='\r') && !inQ){
-        if(ch=='\r' && nx=='\n') i++;
-        row.push(cur); cur="";
-        if(row.some(x=>x!=="")) rows.push(row);
-        row=[];
-        continue;
-      }
-      cur+=ch;
+function parseCSV(text){
+  const rows=[], row=[], cur={v:""}, out=[];
+  let inQ=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i], n=text[i+1];
+    if(c=='"' && inQ && n=='"'){ cur.v+='"'; i++; continue; }
+    if(c=='"'){ inQ=!inQ; continue; }
+    if(c==',' && !inQ){ row.push(cur.v); cur.v=""; continue; }
+    if((c=='\n'||c=='\r') && !inQ){
+      if(c=='\r' && n=='\n') i++;
+      row.push(cur.v); out.push(row.splice(0)); cur.v=""; continue;
     }
-    if(cur.length||row.length){row.push(cur); rows.push(row);}
-    return rows;
+    cur.v+=c;
   }
+  row.push(cur.v); out.push(row);
+  return out.filter(r=>r.some(x=>x!==""));
+}
 
-  function money(n){
-    const v=Number(n||0), abs=Math.abs(v), sign=v<0?"-":"";
-    if(abs>=1e9) return sign+"$"+(abs/1e9).toFixed(2)+"B";
-    if(abs>=1e6) return sign+"$"+(abs/1e6).toFixed(1)+"M";
-    if(abs>=1e3) return sign+"$"+(abs/1e3).toFixed(1)+"K";
-    return sign+"$"+abs.toFixed(0);
-  }
+function money(n){
+  const v=Number(n||0), a=Math.abs(v), s=v<0?"-":"";
+  if(a>=1e9) return s+"$"+(a/1e9).toFixed(2)+"B";
+  if(a>=1e6) return s+"$"+(a/1e6).toFixed(1)+"M";
+  if(a>=1e3) return s+"$"+(a/1e3).toFixed(1)+"K";
+  return s+"$"+a.toFixed(0);
+}
 
-  function safeImg(url){ const u=(url||"").trim(); return u||""; }
+function build(){
+  const url = SHEET_CSV_URL + "&cb=" + Date.now();
 
-  function build(){
-    fetch(SHEET_CSV_URL,{cache:"no-store"})
-      .then(r=>r.text())
-      .then(csv=>{
-        const rows=parseCSV(csv);
-        const header=rows[0].map(h=>h.trim());
-        const data=rows.slice(1).map(r=>{
-          const o={}; header.forEach((h,i)=>o[h]=(r[i]??"").trim()); return o;
-        });
-
-        data.sort((a,b)=>Number(b.total||0)-Number(a.total||0));
-        document.getElementById("fbo-updated").textContent =
-          "Updated: "+new Date().toLocaleString();
-
-        const standings=document.getElementById("fbo-standings-list");
-        standings.innerHTML="";
-
-        function renderDetail(p){
-          document.getElementById("fbo-detail-name").textContent=p.player;
-          document.getElementById("fbo-detail-meta").textContent =
-            `Total ${money(p.total)} • Hits ${money(p.hit_points)} • Bombs ${money(p.bomb_points)}`;
-
-          const hits=[
-            {t:p.hit1,u:safeImg(p.hit1_poster)},
-            {t:p.hit2,u:safeImg(p.hit2_poster)},
-            {t:p.hit3,u:safeImg(p.hit3_poster)},
-          ].filter(x=>x.t);
-
-          const bombs=[
-            {t:p.bomb1,u:safeImg(p.bomb1_poster)},
-            {t:p.bomb2,u:safeImg(p.bomb2_poster)},
-            {t:p.bomb3,u:safeImg(p.bomb3_poster)},
-            {t:p.bomb4,u:safeImg(p.bomb4_poster)},
-            {t:p.bomb5,u:safeImg(p.bomb5_poster)},
-            {t:p.bomb6,u:safeImg(p.bomb6_poster)},
-          ].filter(x=>x.t);
-
-          document.getElementById("fbo-detail-body").innerHTML=`
-            <div class="meta-grid">
-              <div class="stat"><div class="k">Total</div><div class="v">${money(p.total)}</div></div>
-              <div class="stat"><div class="k">Bomb Share</div><div class="v">1/6</div></div>
-              <div class="stat"><div class="k">Hits</div><div class="v">${money(p.hit_points)}</div></div>
-              <div class="stat"><div class="k">Bombs</div><div class="v">${money(p.bomb_points)}</div></div>
-            </div>
-
-            <div class="section-title">Hits</div>
-            <div class="poster-row">
-              ${hits.map(h=>`
-                <div class="poster">
-                  <span class="tag hit">HIT</span>
-                  ${h.u?`<img src="${h.u}" alt="${h.t}">`:`<div style="padding:12px;color:var(--muted)">${h.t}</div>`}
-                </div>`).join("")}
-            </div>
-
-            <div class="section-title">Bomb Exposure</div>
-            <div class="poster-row">
-              ${bombs.map(b=>`
-                <div class="poster">
-                  <span class="tag bomb">BOMB • 1/6</span>
-                  ${b.u?`<img src="${b.u}" alt="${b.t}">`:`<div style="padding:12px;color:var(--muted)">${b.t}</div>`}
-                </div>`).join("")}
-            </div>`;
-        }
-
-        data.forEach((p,idx)=>{
-          const total=Number(p.total||0);
-          const row=document.createElement("div");
-          row.className="row";
-          row.innerHTML=`
-            <div class="rank ${idx===0?"gold":""}">${idx===0?"👑":(idx+1)}</div>
-            <div>
-              <div class="name">${p.player}</div>
-              <div class="mini">Hits ${money(p.hit_points)} • Bombs ${money(p.bomb_points)}</div>
-            </div>
-            <div class="total ${total>=0?"good":"bad"}">${money(total)}</div>`;
-          row.addEventListener("click",()=>renderDetail(p));
-          standings.appendChild(row);
-        });
-
-        if(data.length) renderDetail(data[0]);
-      })
-      .catch(err=>{
-        document.getElementById("fbo-standings-list").innerHTML =
-          `<div style="padding:14px;color:var(--muted)">Couldn’t load data. Check your Sheet sharing + API sheet name.</div>`;
-        console.error(err);
+  fetch(url, { cache:"no-store" })
+    .then(r=>r.text())
+    .then(csv=>{
+      const rows=parseCSV(csv);
+      const header=rows[0].map(h=>h.trim());
+      const data=rows.slice(1).map(r=>{
+        const o={};
+        header.forEach((h,i)=>o[h]=(r[i]||"").trim());
+        return o;
       });
-  }
-  build();
+
+      data.sort((a,b)=>Number(b.total||0)-Number(a.total||0));
+
+      let html = `<h1>Fantasy Box Office League</h1><p>Updated: ${new Date().toLocaleString()}</p><hr>`;
+
+      data.forEach((p,i)=>{
+        html += `
+          <h2>#${i+1} ${p.player} — ${money(p.total)}</h2>
+          <strong>Hits:</strong><br>
+          <img src="${p.hit1_poster}" width="120">
+          <img src="${p.hit2_poster}" width="120">
+          <img src="${p.hit3_poster}" width="120">
+          <br><br>
+          <strong>Bomb Exposure (1/6 each):</strong><br>
+          <img src="${p.bomb1_poster}" width="90">
+          <img src="${p.bomb2_poster}" width="90">
+          <img src="${p.bomb3_poster}" width="90">
+          <img src="${p.bomb4_poster}" width="90">
+          <img src="${p.bomb5_poster}" width="90">
+          <img src="${p.bomb6_poster}" width="90">
+          <hr>
+        `;
+      });
+
+      document.getElementById("app").innerHTML = html;
+    })
+    .catch(e=>{
+      document.getElementById("app").innerHTML = "Error loading data.";
+      console.error(e);
+    });
+}
+
+build();
+setInterval(build, 30000); // auto-refresh every 30 seconds
 </script>
 
 </body>
