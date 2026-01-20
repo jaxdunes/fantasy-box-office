@@ -32,11 +32,7 @@
         linear-gradient(180deg, var(--bg0), var(--bg1));
       min-height:100vh;
     }
-    .wrap{
-      max-width:1100px;
-      margin:0 auto;
-      padding:42px 18px 70px;
-    }
+    .wrap{max-width:1100px;margin:0 auto;padding:42px 18px 70px;}
     .hero{
       border-radius: 30px;
       padding:26px 26px 22px;
@@ -45,76 +41,23 @@
       box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
     }
-    .kicker{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      font-size:12px;
-      letter-spacing:.18em;
-      text-transform:uppercase;
-      color:var(--muted2);
-      margin-bottom:10px;
-    }
-    .dot{
-      width:8px;height:8px;border-radius:50%;
-      background: var(--good);
-      box-shadow: 0 0 0 4px rgba(94,228,139,.15);
-    }
-    h1{
-      margin:0 0 6px;
-      font-size:44px;
-      line-height:1.05;
-      letter-spacing:-.03em;
-    }
-    .sub{
-      margin:0;
-      color:var(--muted);
-      max-width:760px;
-      font-size:15px;
-      line-height:1.45;
-    }
-    .metaRow{
-      margin-top:14px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
-    }
+    .kicker{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;}
+    .dot{width:8px;height:8px;border-radius:50%;background: var(--good);box-shadow: 0 0 0 4px rgba(94,228,139,.15);}
+    h1{margin:0 0 6px;font-size:44px;line-height:1.05;letter-spacing:-.03em;}
+    .sub{margin:0;color:var(--muted);max-width:760px;font-size:15px;line-height:1.45;}
+    .metaRow{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;}
     .pills{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 12px;
-      border-radius:999px;
-      background:var(--pill);
-      border:1px solid var(--stroke);
-      color:var(--muted);
-      font-size:13px;
-    }
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:var(--pill);border:1px solid var(--stroke);color:var(--muted);font-size:13px;}
     .pill strong{color:var(--text); font-weight:650;}
     .btns{display:flex; gap:10px; flex-wrap:wrap;}
     button{
-      appearance:none;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      padding:9px 12px;
-      border-radius:999px;
-      font-size:13px;
-      cursor:pointer;
+      appearance:none;border:1px solid var(--stroke);background: rgba(255,255,255,.06);
+      color:var(--text);padding:9px 12px;border-radius:999px;font-size:13px;cursor:pointer;
       transition:.15s transform, .15s background;
     }
     button:hover{background:rgba(255,255,255,.09)}
     button:active{transform: translateY(1px)}
-    .grid{
-      margin-top:18px;
-      display:grid;
-      grid-template-columns: 420px 1fr;
-      gap:14px;
-      align-items:start;
-    }
+    .grid{margin-top:18px;display:grid;grid-template-columns: 420px 1fr;gap:14px;align-items:start;}
     .card{
       border-radius: var(--radius);
       background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
@@ -123,150 +66,52 @@
       overflow:hidden;
       backdrop-filter: blur(10px);
     }
-    .cardHead{
-      padding:16px 16px 10px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-    }
-    .cardHead h2{
-      margin:0;
-      font-size:16px;
-      letter-spacing:-.01em;
-    }
-    .cardHead .hint{
-      color:var(--muted2);
-      font-size:12px;
-    }
+    .cardHead{padding:16px 16px 10px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;gap:10px;}
+    .cardHead h2{margin:0;font-size:16px;letter-spacing:-.01em;}
+    .cardHead .hint{color:var(--muted2);font-size:12px;}
     .cardBody{padding:14px 16px 16px;}
-    .search{
-      width:100%;
-      padding:10px 12px;
-      border-radius: 12px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      color:var(--text);
-      outline:none;
-      font-size:13px;
-    }
-    .list{
-      margin-top:12px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      max-height: 420px;
-      overflow:auto;
-      padding-right:6px;
-    }
+    .search{width:100%;padding:10px 12px;border-radius: 12px;border:1px solid rgba(255,255,255,.10);background: rgba(0,0,0,.18);color:var(--text);outline:none;font-size:13px;}
+    .list{margin-top:12px;display:flex;flex-direction:column;gap:8px;max-height: 420px;overflow:auto;padding-right:6px;}
     .list::-webkit-scrollbar{width:10px}
     .list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.10);border-radius:999px}
-    .row{
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.09);
-      background: rgba(0,0,0,.12);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      cursor:pointer;
-    }
+    .row{padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.09);background: rgba(0,0,0,.12);display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;}
     .row:hover{background:rgba(255,255,255,.06)}
     .row.active{outline:2px solid rgba(125,95,255,.35)}
-    .row .left{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-      min-width: 0;
-    }
-    .row .name{
-      font-weight:650;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .row .small{
-      color:var(--muted2);
-      font-size:12px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .money{
-      font-variant-numeric: tabular-nums;
-      font-weight:700;
-      white-space:nowrap;
-    }
+    .row .left{display:flex;flex-direction:column;gap:2px;min-width: 0;}
+    .row .name{font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .row .small{color:var(--muted2);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .money{font-variant-numeric: tabular-nums;font-weight:700;white-space:nowrap;}
     .money.good{color:var(--good)}
     .money.bad{color:var(--bad)}
-    .empty{
-      padding:18px;
-      border-radius: 16px;
-      border:1px dashed rgba(255,255,255,.18);
-      background: rgba(0,0,0,.12);
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    /* Posters */
-    .sectionTitle{
-      margin: 0 0 8px;
-      font-size:13px;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-      color:var(--muted2);
-    }
-    .posterGrid{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap:10px;
-      margin-top:10px;
-    }
+    .empty{padding:18px;border-radius: 16px;border:1px dashed rgba(255,255,255,.18);background: rgba(0,0,0,.12);color:var(--muted);font-size:13px;}
+    .sectionTitle{margin: 0 0 8px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted2);}
+    .posterGrid{display:grid;grid-template-columns: repeat(3, minmax(0, 1fr));gap:10px;margin-top:10px;}
     .poster{
-      border-radius:16px;
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      position:relative;
-      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+      border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.10);background: rgba(0,0,0,.18);
+      position:relative;box-shadow: 0 12px 30px rgba(0,0,0,.35);
     }
-    .poster img{
-      width:100%;
-      height:210px;          /* taller = more “real” poster */
-      object-fit: cover;     /* crop to poster-ish rectangle */
-      display:block;
-      background: rgba(0,0,0,.2);
-    }
-    .poster .cap{
-      padding:8px 10px 10px;
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
-    .poster .title{
-      font-size:12.5px;
-      line-height:1.15;
-      font-weight:650;
-      color:var(--text);
-      display:-webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow:hidden;
-      min-height: 30px;
-    }
-    .poster .subline{
-      font-size:12px;
-      color:var(--muted);
-      display:flex;
-      justify-content:space-between;
-      gap:8px;
-      align-items:center;
-    }
+    .poster img{width:100%;height:210px;object-fit: cover;display:block;background: rgba(0,0,0,.2);}
+    .poster .cap{padding:8px 10px 10px;display:flex;flex-direction:column;gap:4px;}
+    .poster .title{font-size:12.5px;line-height:1.15;font-weight:650;color:var(--text);display:-webkit-box;-webkit-line-clamp: 2;-webkit-box-orient: vertical;overflow:hidden;min-height: 30px;}
+    .poster .subline{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px;align-items:center;}
     .tag{
+      position:absolute;top:10px;left:10px;padding:6px 9px;border-radius:999px;background: rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.14);font-size:11px;color:var(--text);backdrop-filter: blur(6px);
+    }
+    .tag.bomb{background: rgba(255,90,122,.18); border-color: rgba(255,90,122,.35)}
+    .tag.hit{background: rgba(94,228,139,.14); border-color: rgba(94,228,139,.35)}
+    .upcomingWrap{margin-top:14px;border-radius: var(--radius);border:1px solid rgba(255,255,255,.10);background: rgba(0,0,0,.12);padding:14px 14px 12px;}
+    .upcomingHeader{display:flex;justify-content:space-between;gap:10px;align-items:flex-end;margin-bottom:10px;}
+    .upcomingHeader .title{margin:0;font-size:16px;font-weight:700;}
+    .upcomingHeader .desc{margin:0;color:var(--muted2);font-size:12.5px;}
+    .hscroll{display:flex;gap:12px;overflow:auto;padding-bottom:8px;scroll-snap-type: x mandatory;}
+    .hscroll::-webkit-scrollbar{height:10px}
+    .hscroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.10);border-radius:999px}
+    .mini{min-width: 160px;max-width: 160px;scroll-snap-align: start;}
+    .mini img{height:240px}
+    .datePill{
       position:absolute;
-      top:10px; left:10px;
+      right:10px; top:10px;
       padding:6px 9px;
       border-radius:999px;
       background: rgba(0,0,0,.55);
@@ -275,74 +120,11 @@
       color:var(--text);
       backdrop-filter: blur(6px);
     }
-    .tag.bomb{background: rgba(255,90,122,.18); border-color: rgba(255,90,122,.35)}
-    .tag.hit{background: rgba(94,228,139,.14); border-color: rgba(94,228,139,.35)}
-
-    /* Upcoming scroller */
-    .upcomingWrap{
-      margin-top:14px;
-      border-radius: var(--radius);
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.12);
-      padding:14px 14px 12px;
-    }
-    .upcomingHeader{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:flex-end;
-      margin-bottom:10px;
-    }
-    .upcomingHeader .title{
-      margin:0;
-      font-size:16px;
-      font-weight:700;
-    }
-    .upcomingHeader .desc{
-      margin:0;
-      color:var(--muted2);
-      font-size:12.5px;
-    }
-    .hscroll{
-      display:flex;
-      gap:12px;
-      overflow:auto;
-      padding-bottom:8px;
-      scroll-snap-type: x mandatory;
-    }
-    .hscroll::-webkit-scrollbar{height:10px}
-    .hscroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.10);border-radius:999px}
-    .mini{
-      min-width: 150px;
-      max-width: 150px;
-      scroll-snap-align: start;
-    }
-    .mini img{height:220px}
-    .footerNote{
-      margin-top:10px;
-      color:var(--muted2);
-      font-size:12px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .err{
-      margin-top:12px;
-      color:#ff9db0;
-      font-size:13px;
-      background: rgba(255,90,122,.12);
-      border:1px solid rgba(255,90,122,.22);
-      padding:10px 12px;
-      border-radius:14px;
-      display:none;
-      white-space:pre-wrap;
-    }
+    .footerNote{margin-top:10px;color:var(--muted2);font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+    .err{margin-top:12px;color:#ff9db0;font-size:13px;background: rgba(255,90,122,.12);border:1px solid rgba(255,90,122,.22);padding:10px 12px;border-radius:14px;display:none;white-space:pre-wrap;}
     @media (max-width: 980px){
       .grid{grid-template-columns: 1fr; }
       .poster img{height:240px}
-      .mini{min-width:160px; max-width:160px}
-      .mini img{height:240px}
       h1{font-size:38px}
     }
   </style>
@@ -363,7 +145,7 @@
       <div class="metaRow">
         <div class="pills">
           <span class="pill"><strong>Live</strong></span>
-          <span class="pill" id="pillUpdated">Updated: <strong id="fbo-updated">—</strong></span>
+          <span class="pill">Updated: <strong id="fbo-updated">—</strong></span>
           <span class="pill"><span id="pillCount">0</span>&nbsp;players</span>
         </div>
         <div class="btns">
@@ -395,7 +177,7 @@
               <h2 id="detailTitle">Select a player</h2>
               <div class="hint">Their roster will appear here.</div>
             </div>
-            <div class="hint" id="detailMeta"> </div>
+            <div class="hint" id="detailMeta"></div>
           </div>
           <div class="cardBody" id="detail">
             <div class="empty">Pick someone on the left to view their hits + bomb exposure.</div>
@@ -407,7 +189,7 @@
         <div class="upcomingHeader">
           <div>
             <p class="title">Upcoming Releases</p>
-            <p class="desc">Only chosen, unreleased movies (profit = $0). Bombs show as “Bomb” (no names).</p>
+            <p class="desc">Only chosen, unreleased movies. Bombs show as “Bomb” (no names).</p>
           </div>
         </div>
         <div class="hscroll" id="upcoming"></div>
@@ -421,22 +203,14 @@
   </div>
 
   <script>
-    /******************************************************************
-     * 1) PUT YOUR SHEET LINKS HERE
-     *
-     * ✅ Best: a published CSV link (Publish to web → CSV).
-     * ✅ Also works: a public “/edit?gid=” link (we auto-convert to /export?format=csv&gid=).
-     *
-     * Your earlier working published CSV looked like:
-     * https://docs.google.com/spreadsheets/d/e/2PACX-.../pub?output=csv
-     ******************************************************************/
-    const API_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8g_VBKkleUsEkvhsj-Gs4Xsk5k9RifmPFUHw8Yq0_K5X8cca9p1or8TBNI5UbfglWT-A6uVSed_tX/pub?gid=784663852&single=true&output=csv";
+    // ✅ Your working API CSV
+    const API_SHEET_URL =
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8g_VBKkleUsEkvhsj-Gs4Xsk5k9RifmPFUHw8Yq0_K5X8cca9p1or8TBNI5UbfglWT-A6uVSed_tX/pub?output=csv";
 
-    // Optional: publish your MOVIES tab to CSV too (Movie → Profit To Date).
-    // If you leave this blank, the site still works, but the per-movie $ will show $0.
-    const MOVIES_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8g_VBKkleUsEkvhsj-Gs4Xsk5k9RifmPFUHw8Yq0_K5X8cca9p1or8TBNI5UbfglWT-A6uVSed_tX/pub?gid=29963569&single=true&output=csv";
-
-    /******************************************************************/
+    // 👇 PASTE your MOVIES tab CSV here (Publish to web → CSV for MOVIES sheet)
+    // It should include columns like: Movie, Release Date, Profit To Date, Poster URL (optional)
+    const MOVIES_SHEET_URL =
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8g_VBKkleUsEkvhsj-Gs4Xsk5k9RifmPFUHw8Yq0_K5X8cca9p1or8TBNI5UbfglWT-A6uVSed_tX/pub?gid=29963569&single=true&output=csv"; // <-- paste MOVIES CSV URL
 
     const REFRESH_MS = 30000;
 
@@ -457,68 +231,42 @@
 
     let state = {
       players: [],
-      moviesByKey: new Map(), // key => {profit, title}
+      moviesByKey: new Map(), // key => {profit, date, poster}
       selected: null,
       lastCsvUrl: "",
     };
 
     els.btnRefresh.addEventListener("click", () => build());
-    els.btnClear.addEventListener("click", () => {
-      state.selected = null;
-      renderAll();
-    });
-
+    els.btnClear.addEventListener("click", () => { state.selected = null; renderAll(); });
     els.search.addEventListener("input", () => renderStandings());
 
-    function showError(msg){
-      els.err.style.display = "block";
-      els.err.textContent = msg;
-    }
-    function clearError(){
-      els.err.style.display = "none";
-      els.err.textContent = "";
-    }
+    function showError(msg){ els.err.style.display = "block"; els.err.textContent = msg; }
+    function clearError(){ els.err.style.display = "none"; els.err.textContent = ""; }
 
-    // Convert various Google Sheet URLs into a CSV endpoint.
     function toCsvUrl(url){
       if (!url) return "";
       const u = String(url).trim();
-
-      // Published "pub?output=csv" or "pub?gid=..&single=true&output=csv"
       if (u.includes("/pub") && u.includes("output=csv")) return u;
-
-      // Already export
       if (u.includes("/export?") && u.includes("format=csv")) return u;
 
-      // Typical edit URL: /spreadsheets/d/<id>/edit?gid=123
       const m = u.match(/https:\/\/docs\.google\.com\/spreadsheets\/d\/([^/]+)\/edit(?:.*?gid=(\d+))?/);
       if (m){
         const id = m[1];
         const gid = m[2] || "0";
         return `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${gid}`;
       }
-
-      // Published "pubhtml" — try swapping to CSV
       if (u.includes("/pubhtml")){
         return u.replace("/pubhtml", "/pub").replace(/(\?|&)output=[^&]+/g,"") + (u.includes("?") ? "&" : "?") + "output=csv";
       }
-
-      // Fall back
       return u;
     }
 
-    // Robust CSV parsing (handles quotes + commas + newlines).
     function parseCSV(text){
       const s = String(text || "");
-
-      // If Google returns HTML (not published / not public), detect early.
       if (s.trim().startsWith("<!DOCTYPE") || s.includes("<html") || s.includes("<head")){
         throw new Error("Sheet did not return CSV (got HTML). Make sure the sheet/tab is public OR published to web as CSV.");
       }
-
-      // Remove UTF-8 BOM if present
       const t = s.replace(/^\uFEFF/, "");
-
       const rows = [];
       let row = [];
       let cell = "";
@@ -526,45 +274,60 @@
 
       for (let i=0; i<t.length; i++){
         const ch = t[i];
-
         if (inQuotes){
           if (ch === '"'){
             if (t[i+1] === '"'){ cell += '"'; i++; }
             else { inQuotes = false; }
-          } else {
-            cell += ch;
-          }
+          } else cell += ch;
         } else {
-          if (ch === '"'){
-            inQuotes = true;
-          } else if (ch === ","){
-            row.push(cell);
-            cell = "";
-          } else if (ch === "\n"){
-            row.push(cell);
-            rows.push(row);
-            row = [];
-            cell = "";
-          } else if (ch === "\r"){
-            // ignore
-          } else {
-            cell += ch;
-          }
+          if (ch === '"') inQuotes = true;
+          else if (ch === ","){ row.push(cell); cell=""; }
+          else if (ch === "\n"){ row.push(cell); rows.push(row); row=[]; cell=""; }
+          else if (ch === "\r") {}
+          else cell += ch;
         }
       }
-      row.push(cell);
-      rows.push(row);
+      row.push(cell); rows.push(row);
 
-      // Trim trailing empty rows
-      while (rows.length && rows[rows.length-1].every(c => String(c||"").trim() === "")){
-        rows.pop();
-      }
+      while (rows.length && rows[rows.length-1].every(c => String(c||"").trim() === "")) rows.pop();
       return rows;
     }
 
+    function pickHeaderRow(rows){
+      for (let i=0; i<rows.length; i++){
+        const r = rows[i].map(c => String(c||"").toLowerCase().trim());
+        if (r.includes("player") || r.includes("movie")) return i;
+      }
+      return 0;
+    }
+
+    function rowsToObjects(rows){
+      const headerRowIndex = pickHeaderRow(rows);
+      const header = rows[headerRowIndex].map(h => String(h||"").toLowerCase().trim());
+      const data = [];
+      for (let i=headerRowIndex+1; i<rows.length; i++){
+        const r = rows[i];
+        const o = {};
+        for (let c=0; c<header.length; c++){
+          const key = header[c] || `col_${c}`;
+          o[key] = String(r[c] ?? "").trim();
+        }
+        data.push(o);
+      }
+      return { header, data };
+    }
+
+    async function fetchCsvObjects(url){
+      const csvUrl = toCsvUrl(url);
+      const bust = csvUrl + (csvUrl.includes("?") ? "&" : "?") + "cb=" + Date.now();
+      const r = await fetch(bust, { cache: "no-store" });
+      const text = await r.text();
+      const rows = parseCSV(text);
+      const { header, data } = rowsToObjects(rows);
+      return { header, data, csvUrl };
+    }
+
     function normalizeKey(str){
-      // Lowercase, trim, collapse spaces, strip NBSP, normalize punctuation.
-      // IMPORTANT: we keep letters; we do NOT strip words like you saw earlier.
       return String(str || "")
         .replace(/\u00A0/g, " ")
         .toLowerCase()
@@ -584,221 +347,50 @@
     function fmtMoney(n){
       const sign = n < 0 ? "-" : "";
       const abs = Math.abs(n);
-
       const fmt = (v, suf) => sign + "$" + v.toFixed(1).replace(/\.0$/, "") + suf;
-
       if (abs >= 1e9) return fmt(abs/1e9, "B");
       if (abs >= 1e6) return fmt(abs/1e6, "M");
       if (abs >= 1e3) return fmt(abs/1e3, "K");
       return sign + "$" + abs.toFixed(0);
     }
+    function moneyClass(n){ if (n>0) return "good"; if (n<0) return "bad"; return ""; }
+    function safeImg(url){ const u = String(url || "").trim(); return u ? u : ""; }
 
-    function moneyClass(n){
-      if (n > 0) return "good";
-      if (n < 0) return "bad";
-      return "";
-    }
+    // Date formatting helpers
+    function parseDateLoose(s){
+      const v = String(s||"").trim();
+      if (!v) return null;
 
-    function safeImg(url){
-      const u = String(url || "").trim();
-      return u ? u : "";
-    }
+      // Try native first
+      const d1 = new Date(v);
+      if (!isNaN(d1.getTime())) return d1;
 
-    function pickHeaderRow(rows){
-      // Find first row that contains "player" (case-insensitive) ANYWHERE.
-      for (let i=0; i<rows.length; i++){
-        const r = rows[i].map(c => String(c||"").toLowerCase().trim());
-        if (r.includes("player")) return i;
-      }
-      // Fallback: if first row looks header-ish (has a bunch of strings)
-      return 0;
-    }
-
-    function rowsToObjects(rows){
-      const headerRowIndex = pickHeaderRow(rows);
-      const header = rows[headerRowIndex].map(h => String(h||"").toLowerCase().trim());
-
-      const data = [];
-      for (let i=headerRowIndex+1; i<rows.length; i++){
-        const r = rows[i];
-        const o = {};
-        for (let c=0; c<header.length; c++){
-          const key = header[c] || `col_${c}`;
-          o[key] = String(r[c] ?? "").trim();
-        }
-        data.push(o);
-      }
-      return { header, data };
-    }
-
-    async function fetchCsvObjects(url){
-      const csvUrl = toCsvUrl(url);
-      const bust = csvUrl + (csvUrl.includes("?") ? "&" : "?") + "cb=" + Date.now();
-
-      const r = await fetch(bust, { cache: "no-store" });
-      const text = await r.text();
-
-      const rows = parseCSV(text);
-      const { header, data } = rowsToObjects(rows);
-
-      return { header, data, csvUrl };
-    }
-
-    async function build(){
-      clearError();
-
-      try{
-        // 1) Load API players
-        const api = await fetchCsvObjects(API_SHEET_URL);
-        state.lastCsvUrl = api.csvUrl;
-
-        // Validate we have a player column (case-insensitive already)
-        if (!api.header.includes("player")){
-          // show what we DID find in the header row to debug
-          throw new Error(
-            `CSV header missing "player". Found: ${api.header.slice(0, 16).join(", ")}\n\n` +
-            `Tip: open the CSV URL directly and confirm the first real header row includes player,total,...`
-          );
-        }
-
-        // Clean player rows
-        const players = api.data
-          .map(o => ({
-            player: o.player || "",
-            total: num(o.total),
-            hit_points: num(o.hit_points),
-            bomb_points: num(o.bomb_points),
-            // hits
-            hits: [
-              { title: o.hit1, poster: o.hit1_poster, kind:"Hit" },
-              { title: o.hit2, poster: o.hit2_poster, kind:"Hit" },
-              { title: o.hit3, poster: o.hit3_poster, kind:"Hit" },
-            ].filter(x => String(x.title||"").trim() !== ""),
-            // bombs (exposure)
-            bombs: [
-              { title: o.bomb1, poster: o.bomb1_poster, kind:"Bomb" },
-              { title: o.bomb2, poster: o.bomb2_poster, kind:"Bomb" },
-              { title: o.bomb3, poster: o.bomb3_poster, kind:"Bomb" },
-              { title: o.bomb4, poster: o.bomb4_poster, kind:"Bomb" },
-              { title: o.bomb5, poster: o.bomb5_poster, kind:"Bomb" },
-              { title: o.bomb6, poster: o.bomb6_poster, kind:"Bomb" },
-            ].filter(x => String(x.title||"").trim() !== ""),
-          }))
-          .filter(p => p.player);
-
-        // 2) Load MOVIES profit map (optional)
-        const moviesMap = new Map();
-        if (MOVIES_SHEET_URL && MOVIES_SHEET_URL.trim()){
-          const mv = await fetchCsvObjects(MOVIES_SHEET_URL);
-          // Expect columns like: movie, profit to date, key, etc. We’ll try common names.
-          const h = mv.header;
-
-          const movieCol =
-            h.includes("key") ? "key" :
-            h.includes("movie") ? "movie" :
-            h.includes("title") ? "title" :
-            null;
-
-          const profitCol =
-            h.includes("profit to date") ? "profit to date" :
-            h.includes("profit_to_date") ? "profit_to_date" :
-            h.includes("profit") ? "profit" :
-            null;
-
-          if (movieCol && profitCol){
-            mv.data.forEach(o => {
-              const k = normalizeKey(o[movieCol]);
-              moviesMap.set(k, { profit: num(o[profitCol]), title: o[movieCol] });
-            });
-          }
-        }
-
-        state.players = players.sort((a,b) => b.total - a.total);
-        state.moviesByKey = moviesMap;
-
-        // update top meta
-        els.updated.textContent = new Date().toLocaleString();
-        els.count.textContent = String(state.players.length);
-        els.standingsMeta.textContent = `${state.players.length} players`;
-
-        // If selection disappeared, clear it
-        if (state.selected && !state.players.find(p => p.player === state.selected)){
-          state.selected = null;
-        }
-
-        renderAll();
-      } catch (err){
-        showError(`Data load error:\n${err.message}\n\nCSV URL used:\n${state.lastCsvUrl || toCsvUrl(API_SHEET_URL)}`);
-        // still render empty chrome
-        state.players = [];
-        els.count.textContent = "0";
-        renderAll();
-        console.error(err);
-      }
-    }
-
-    function renderAll(){
-      renderStandings();
-      renderDetail();
-      renderUpcoming();
-    }
-
-    function renderStandings(){
-      const q = String(els.search.value || "").toLowerCase().trim();
-      const list = state.players.filter(p => p.player.toLowerCase().includes(q));
-
-      els.standings.innerHTML = "";
-
-      if (!list.length){
-        const div = document.createElement("div");
-        div.className = "empty";
-        div.textContent = state.players.length ? "No matches." : "No players loaded yet.";
-        els.standings.appendChild(div);
-        return;
+      // Try M/D/YYYY
+      const m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if (m){
+        const mm = Number(m[1]) - 1;
+        const dd = Number(m[2]);
+        const yy = Number(m[3]);
+        const d2 = new Date(yy, mm, dd);
+        return isNaN(d2.getTime()) ? null : d2;
       }
 
-      list.forEach((p, idx) => {
-        const row = document.createElement("div");
-        row.className = "row" + (state.selected === p.player ? " active" : "");
-        row.addEventListener("click", () => {
-          state.selected = p.player;
-          renderAll();
-        });
-
-        const left = document.createElement("div");
-        left.className = "left";
-
-        const name = document.createElement("div");
-        name.className = "name";
-        const rank = state.players.findIndex(x => x.player === p.player) + 1;
-        name.textContent = `#${rank} ${p.player}`;
-        left.appendChild(name);
-
-        const small = document.createElement("div");
-        small.className = "small";
-        small.textContent = `Hits: ${p.hits.length}  •  Bombs: ${p.bombs.length}`;
-        left.appendChild(small);
-
-        const right = document.createElement("div");
-        const m = document.createElement("div");
-        m.className = "money " + moneyClass(p.total);
-        m.textContent = fmtMoney(p.total);
-        right.appendChild(m);
-
-        row.appendChild(left);
-        row.appendChild(right);
-        els.standings.appendChild(row);
-      });
+      return null;
+    }
+    function fmtShortDate(d){
+      if (!d) return "";
+      return d.toLocaleDateString(undefined, { month:"short", day:"numeric" });
     }
 
-    function movieProfit(title){
-      // If MOVIES map is available, use it; otherwise default 0.
+    function getMovieMeta(title){
       const k = normalizeKey(title);
-      const hit = state.moviesByKey.get(k);
-      return hit ? hit.profit : 0;
+      return state.moviesByKey.get(k) || { profit: 0, date: null, poster: "" };
     }
+    function movieProfit(title){ return getMovieMeta(title).profit || 0; }
+    function movieDate(title){ return getMovieMeta(title).date || null; }
+    function moviePosterFallback(title){ return getMovieMeta(title).poster || ""; }
 
-    function makePosterCard(movie, ownerLabel, showProfit){
+    function makePosterCard(movie, ownerLabel, showProfit, showDate){
       const wrap = document.createElement("div");
       wrap.className = "poster";
 
@@ -807,15 +399,21 @@
       tag.textContent = ownerLabel; // "Will" or "Bomb"
       wrap.appendChild(tag);
 
+      if (showDate){
+        const d = movieDate(movie.title);
+        const pill = document.createElement("div");
+        pill.className = "datePill";
+        pill.textContent = d ? fmtShortDate(d) : "—";
+        wrap.appendChild(pill);
+      }
+
       const img = document.createElement("img");
       img.alt = movie.title || "";
-      const src = safeImg(movie.poster);
-      if (src){
-        img.src = src;
-      } else {
-        // simple placeholder
-        img.style.background = "linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03))";
-      }
+
+      // prefer poster on the row; fallback to MOVIES poster
+      const src = safeImg(movie.poster) || safeImg(moviePosterFallback(movie.title));
+      if (src) img.src = src;
+      else img.style.background = "linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03))";
       wrap.appendChild(img);
 
       const cap = document.createElement("div");
@@ -851,6 +449,153 @@
       return wrap;
     }
 
+    async function build(){
+      clearError();
+
+      try{
+        // 1) API players
+        const api = await fetchCsvObjects(API_SHEET_URL);
+
+        if (!api.header.includes("player")){
+          throw new Error(`CSV header missing "player". Found: ${api.header.slice(0,16).join(", ")}`);
+        }
+
+        const players = api.data
+          .map(o => ({
+            player: o.player || "",
+            total: num(o.total),
+            hit_points: num(o.hit_points),
+            bomb_points: num(o.bomb_points),
+            hits: [
+              { title: o.hit1, poster: o.hit1_poster, kind:"Hit" },
+              { title: o.hit2, poster: o.hit2_poster, kind:"Hit" },
+              { title: o.hit3, poster: o.hit3_poster, kind:"Hit" },
+            ].filter(x => String(x.title||"").trim() !== ""),
+            bombs: [
+              { title: o.bomb1, poster: o.bomb1_poster, kind:"Bomb" },
+              { title: o.bomb2, poster: o.bomb2_poster, kind:"Bomb" },
+              { title: o.bomb3, poster: o.bomb3_poster, kind:"Bomb" },
+              { title: o.bomb4, poster: o.bomb4_poster, kind:"Bomb" },
+              { title: o.bomb5, poster: o.bomb5_poster, kind:"Bomb" },
+              { title: o.bomb6, poster: o.bomb6_poster, kind:"Bomb" },
+            ].filter(x => String(x.title||"").trim() !== ""),
+          }))
+          .filter(p => p.player);
+
+        // 2) MOVIES meta map (profit + release date)
+        const moviesMap = new Map();
+
+        if (MOVIES_SHEET_URL && MOVIES_SHEET_URL.trim()){
+          const mv = await fetchCsvObjects(MOVIES_SHEET_URL);
+          const h = mv.header;
+
+          const movieCol =
+            h.includes("key") ? "key" :
+            h.includes("movie") ? "movie" :
+            h.includes("title") ? "title" :
+            null;
+
+          const profitCol =
+            h.includes("profit to date") ? "profit to date" :
+            h.includes("profit_to_date") ? "profit_to_date" :
+            h.includes("profit") ? "profit" :
+            null;
+
+          const dateCol =
+            h.includes("release date") ? "release date" :
+            h.includes("releasedate") ? "releasedate" :
+            h.includes("release_date") ? "release_date" :
+            h.includes("date") ? "date" :
+            null;
+
+          const posterCol =
+            h.includes("poster url") ? "poster url" :
+            h.includes("poster") ? "poster" :
+            h.includes("poster_url") ? "poster_url" :
+            null;
+
+          if (!movieCol) throw new Error("MOVIES CSV needs a Movie column (or Key).");
+          if (!dateCol) throw new Error('MOVIES CSV needs a "Release Date" column.');
+          // profit optional — but recommended
+          mv.data.forEach(o => {
+            const key = normalizeKey(o[movieCol]);
+            const profit = profitCol ? num(o[profitCol]) : 0;
+            const date = parseDateLoose(o[dateCol]);
+            const poster = posterCol ? String(o[posterCol]||"").trim() : "";
+            if (key) moviesMap.set(key, { profit, date, poster });
+          });
+        }
+
+        state.players = players.sort((a,b) => b.total - a.total);
+        state.moviesByKey = moviesMap;
+
+        els.updated.textContent = new Date().toLocaleString();
+        els.count.textContent = String(state.players.length);
+        els.standingsMeta.textContent = `${state.players.length} players`;
+
+        if (state.selected && !state.players.find(p => p.player === state.selected)){
+          state.selected = null;
+        }
+
+        renderAll();
+      } catch (err){
+        showError(`Data load error:\n${err.message}`);
+        state.players = [];
+        renderAll();
+        console.error(err);
+      }
+    }
+
+    function renderAll(){
+      renderStandings();
+      renderDetail();
+      renderUpcoming();
+    }
+
+    function renderStandings(){
+      const q = String(els.search.value || "").toLowerCase().trim();
+      const list = state.players.filter(p => p.player.toLowerCase().includes(q));
+      els.standings.innerHTML = "";
+
+      if (!list.length){
+        const div = document.createElement("div");
+        div.className = "empty";
+        div.textContent = state.players.length ? "No matches." : "No players loaded yet.";
+        els.standings.appendChild(div);
+        return;
+      }
+
+      list.forEach(p => {
+        const row = document.createElement("div");
+        row.className = "row" + (state.selected === p.player ? " active" : "");
+        row.addEventListener("click", () => { state.selected = p.player; renderAll(); });
+
+        const left = document.createElement("div");
+        left.className = "left";
+
+        const name = document.createElement("div");
+        name.className = "name";
+        const rank = state.players.findIndex(x => x.player === p.player) + 1;
+        name.textContent = `#${rank} ${p.player}`;
+        left.appendChild(name);
+
+        const small = document.createElement("div");
+        small.className = "small";
+        small.textContent = `Hits: ${p.hits.length}  •  Bombs: ${p.bombs.length}`;
+        left.appendChild(small);
+
+        const right = document.createElement("div");
+        const m = document.createElement("div");
+        m.className = "money " + moneyClass(p.total);
+        m.textContent = fmtMoney(p.total);
+        right.appendChild(m);
+
+        row.appendChild(left);
+        row.appendChild(right);
+        els.standings.appendChild(row);
+      });
+    }
+
     function renderDetail(){
       const p = state.players.find(x => x.player === state.selected);
 
@@ -866,7 +611,6 @@
 
       const root = document.createElement("div");
 
-      // Total / points line
       const top = document.createElement("div");
       top.className = "empty";
       top.style.borderStyle = "solid";
@@ -883,7 +627,6 @@
       `;
       root.appendChild(top);
 
-      // Hits
       const hitsTitle = document.createElement("div");
       hitsTitle.className = "sectionTitle";
       hitsTitle.style.marginTop = "14px";
@@ -892,10 +635,9 @@
 
       const hitsGrid = document.createElement("div");
       hitsGrid.className = "posterGrid";
-      p.hits.forEach(m => hitsGrid.appendChild(makePosterCard(m, p.player, true)));
+      p.hits.forEach(m => hitsGrid.appendChild(makePosterCard(m, p.player, true, false)));
       root.appendChild(hitsGrid);
 
-      // Bomb exposure (NO names next to bomb picks; tag should be "Bomb")
       const bombsTitle = document.createElement("div");
       bombsTitle.className = "sectionTitle";
       bombsTitle.style.marginTop = "14px";
@@ -904,7 +646,7 @@
 
       const bombsGrid = document.createElement("div");
       bombsGrid.className = "posterGrid";
-      p.bombs.forEach(m => bombsGrid.appendChild(makePosterCard(m, "Bomb", true)));
+      p.bombs.forEach(m => bombsGrid.appendChild(makePosterCard(m, "Bomb", true, false)));
       root.appendChild(bombsGrid);
 
       els.detail.innerHTML = "";
@@ -914,39 +656,54 @@
     function renderUpcoming(){
       els.upcoming.innerHTML = "";
 
-      // Only chosen movies: take from API players (hits + bombs), de-dupe by title.
-      // Only unreleased: profit == 0 (per your rule).
+      if (!MOVIES_SHEET_URL || !MOVIES_SHEET_URL.trim()){
+        const div = document.createElement("div");
+        div.className = "empty";
+        div.textContent = "To show dates here, publish your MOVIES tab to CSV and paste the URL into MOVIES_SHEET_URL in the code.";
+        els.upcoming.appendChild(div);
+        return;
+      }
+
+      // Only chosen movies: from API players, de-dupe by title
+      // Only unreleased: profit == 0 (your rule)
       const seen = new Set();
       const items = [];
 
       state.players.forEach(p => {
         p.hits.forEach(m => {
           const k = normalizeKey(m.title);
-          if (!k || seen.has("H:"+k)) return;
-          seen.add("H:"+k);
-          const prof = movieProfit(m.title);
-          if (prof === 0){
-            items.push({ ...m, owner: p.player, kind:"Hit" });
-          }
-        });
-        p.bombs.forEach(m => {
-          const k = normalizeKey(m.title);
-          if (!k || seen.has("B:"+k)) return;
-          seen.add("B:"+k);
-          const prof = movieProfit(m.title);
-          if (prof === 0){
-            items.push({ ...m, owner: "Bomb", kind:"Bomb" }); // no names
+          if (!k || seen.has(k)) return;
+          seen.add(k);
+          const meta = getMovieMeta(m.title);
+          if ((meta.profit || 0) === 0){
+            items.push({ ...m, owner: p.player, kind:"Hit", date: meta.date });
           }
         });
       });
 
-      // Sort alphabetically for now (no release dates in API CSV)
-      items.sort((a,b) => String(a.title||"").localeCompare(String(b.title||"")));
+      state.players.forEach(p => {
+        p.bombs.forEach(m => {
+          const k = normalizeKey(m.title);
+          if (!k || seen.has(k)) return;
+          seen.add(k);
+          const meta = getMovieMeta(m.title);
+          if ((meta.profit || 0) === 0){
+            items.push({ ...m, owner: "Bomb", kind:"Bomb", date: meta.date });
+          }
+        });
+      });
+
+      // Sort by release date
+      items.sort((a,b) => {
+        const da = a.date ? a.date.getTime() : 9e18;
+        const db = b.date ? b.date.getTime() : 9e18;
+        return da - db;
+      });
 
       if (!items.length){
         const div = document.createElement("div");
         div.className = "empty";
-        div.textContent = state.players.length ? "No unreleased chosen movies (profit = $0) found." : "No data loaded.";
+        div.textContent = "No upcoming chosen movies found (profit = 0).";
         els.upcoming.appendChild(div);
         return;
       }
@@ -954,12 +711,12 @@
       items.forEach(m => {
         const mini = document.createElement("div");
         mini.className = "mini";
-        mini.appendChild(makePosterCard(m, m.kind === "Bomb" ? "Bomb" : m.owner, false));
+        const label = (m.kind === "Bomb") ? "Bomb" : m.owner;
+        mini.appendChild(makePosterCard(m, label, false, true)); // showDate=true
         els.upcoming.appendChild(mini);
       });
     }
 
-    // Initial + auto refresh
     build();
     setInterval(build, REFRESH_MS);
   </script>
