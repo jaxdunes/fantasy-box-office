@@ -609,46 +609,72 @@
   }
 
   function renderUpcoming(){
-    const { hitOwnerByKey, bombKeys } = buildLookupsFromAPI();
-    const tISO = todayISO();
+  const tISO = todayISO();
 
-    // filter ONLY unreleased (release date >= today)
-    let upcoming = MOVIES
-      .filter(m => m.releaseISO && m.releaseISO >= tISO)
-      .map(m => {
-        const k = normKey(m.key || m.title);
-        const hitOwner = hitOwnerByKey.get(k);
+  // Build a map from movie key -> movie row (poster/release/profit)
+  const movieByKey = new Map();
+  MOVIES.forEach(m => movieByKey.set(normKey(m.key || m.title), m));
 
-        // priority: hit > bomb > unknown (but unknown still allowed if unreleased)
-        let kind = "unknown";
-        if (hitOwner) kind = "hit";
-        else if (bombKeys.has(k)) kind = "bomb";
-        else kind = "unknown";
+  // Collect ONLY movies that were actually chosen (hits + bombs) from the API CSV
+  const chosen = new Map(); // key -> { title, kind, owner }
 
-        return {
-          ...m,
-          kind: (kind === "unknown" ? "bomb" : kind), // you said show bomb or owner; if unknown, treat as bomb exposure by default
-          owner: hitOwner || ""
-        };
-      });
-
-    // sort by release date ascending
-    upcoming.sort((a,b) => (a.releaseISO||"").localeCompare(b.releaseISO||""));
-
-    els.upcoming.innerHTML = "";
-    els.upcomingCount.textContent = `${upcoming.length} movies`;
-    els.upcomingSub.textContent = "Scroll → to view upcoming releases";
-
-    if (!upcoming.length){
-      els.upcoming.appendChild(Object.assign(document.createElement("div"), {
-        className: "empty",
-        textContent: "No unreleased movies found. Make sure MOVIES has Release Date values and they’re real dates."
-      }));
-      return;
+  API.forEach(p => {
+    // Hits (owner shown)
+    for (let i=1;i<=3;i++){
+      const title = safeStr(p[`hit${i}`]);
+      if (!title) continue;
+      const k = normKey(title);
+      chosen.set(k, { title, kind: "hit", owner: p.player });
     }
 
-    upcoming.forEach(m => els.upcoming.appendChild(upcomingRow(m)));
+    // Bombs (no owner shown)
+    for (let i=1;i<=6;i++){
+      const title = safeStr(p[`bomb${i}`]);
+      if (!title) continue;
+      const k = normKey(title);
+      // don’t overwrite a hit if somehow the same movie appears in both
+      if (!chosen.has(k)) chosen.set(k, { title, kind: "bomb", owner: "" });
+    }
+  });
+
+  // Join chosen movies to MOVIES sheet details + keep ONLY unreleased
+  const upcoming = [];
+  for (const [k, c] of chosen.entries()){
+    const m = movieByKey.get(k);
+
+    // If it’s not in MOVIES, skip it (keeps the scroller “picks only” and clean)
+    if (!m) continue;
+
+    // Only unreleased
+    if (!m.releaseISO || m.releaseISO < tISO) continue;
+
+    upcoming.push({
+      title: m.title || c.title,
+      posterUrl: m.posterUrl,
+      releaseISO: m.releaseISO,
+      releaseShort: m.releaseShort,
+      profit: m.profit || 0,
+      kind: c.kind,
+      owner: c.owner
+    });
   }
+
+  upcoming.sort((a,b) => (a.releaseISO||"").localeCompare(b.releaseISO||""));
+
+  els.upcoming.innerHTML = "";
+  els.upcomingCount.textContent = `${upcoming.length} movies`;
+  els.upcomingSub.textContent = upcoming.length ? "Scroll → to view upcoming picks" : "No unreleased picks found";
+
+  if (!upcoming.length){
+    els.upcoming.appendChild(Object.assign(document.createElement("div"), {
+      className: "empty",
+      textContent: "No unreleased chosen movies. (Only movies that appear in API picks + have future Release Dates in MOVIES will show.)"
+    }));
+    return;
+  }
+
+  upcoming.forEach(m => els.upcoming.appendChild(upcomingRow(m)));
+}
 
   function renderStandings(){
     const q = els.search.value.trim().toLowerCase();
