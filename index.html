@@ -6,719 +6,918 @@
   <title>Fantasy Box Office League</title>
   <style>
     :root{
-      --bg0:#05070f;
-      --bg1:#0a0f22;
-      --card:rgba(255,255,255,.06);
-      --card2:rgba(255,255,255,.09);
-      --stroke:rgba(255,255,255,.10);
-      --text:#eaf0ff;
-      --muted:rgba(234,240,255,.72);
-      --muted2:rgba(234,240,255,.55);
-      --good:#5ee48b;
-      --bad:#ff5a7a;
-      --pill:rgba(255,255,255,.08);
-      --shadow: 0 20px 60px rgba(0,0,0,.45);
-      --radius: 22px;
+      --bg1:#070816;
+      --bg2:#06111a;
+      --card:rgba(255,255,255,.08);
+      --card2:rgba(255,255,255,.06);
+      --stroke:rgba(255,255,255,.12);
+      --text:#eef0ff;
+      --muted:rgba(238,240,255,.65);
+      --good:#39d98a;
+      --bad:#ff4d6d;
+      --chip:rgba(0,0,0,.28);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius: 26px;
     }
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       color:var(--text);
       background:
-        radial-gradient(1200px 800px at 22% 18%, rgba(125,95,255,.25), transparent 55%),
-        radial-gradient(1000px 700px at 72% 20%, rgba(0,220,255,.18), transparent 55%),
-        radial-gradient(1000px 700px at 70% 80%, rgba(255,120,90,.12), transparent 55%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
+        radial-gradient(1200px 700px at 20% 10%, rgba(130,66,255,.40), transparent 55%),
+        radial-gradient(1000px 650px at 80% 20%, rgba(0,210,255,.25), transparent 55%),
+        radial-gradient(900px 600px at 50% 90%, rgba(255,72,124,.18), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
       min-height:100vh;
+      padding:28px 18px 60px;
     }
-    .wrap{max-width:1100px;margin:0 auto;padding:42px 18px 70px;}
+    .shell{max-width:1180px;margin:0 auto;}
     .hero{
-      border-radius: 30px;
-      padding:26px 26px 22px;
-      background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      background: linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
       border:1px solid var(--stroke);
+      border-radius: 34px;
+      padding: 26px 26px 20px;
       box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+    .kicker{
+      font-size:12px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:rgba(238,240,255,.7);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .dot{width:10px;height:10px;border-radius:999px;background:var(--good); box-shadow:0 0 0 4px rgba(57,217,138,.15);}
+    h1{margin:0;font-size:44px;line-height:1.04;}
+    .sub{margin:10px 0 0;color:var(--muted);max-width:760px;}
+    .topbar{
+      margin-top:16px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .chips{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:var(--chip);
+      color:rgba(238,240,255,.85);
+      font-size:13px;
       backdrop-filter: blur(10px);
     }
-    .kicker{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;}
-    .dot{width:8px;height:8px;border-radius:50%;background: var(--good);box-shadow: 0 0 0 4px rgba(94,228,139,.15);}
-    h1{margin:0 0 6px;font-size:44px;line-height:1.05;letter-spacing:-.03em;}
-    .sub{margin:0;color:var(--muted);max-width:760px;font-size:15px;line-height:1.45;}
-    .metaRow{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;}
-    .pills{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
-    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:var(--pill);border:1px solid var(--stroke);color:var(--muted);font-size:13px;}
-    .pill strong{color:var(--text); font-weight:650;}
-    .btns{display:flex; gap:10px; flex-wrap:wrap;}
+    .chip .miniDot{width:8px;height:8px;border-radius:999px;background:rgba(255,255,255,.25);}
     button{
-      appearance:none;border:1px solid var(--stroke);background: rgba(255,255,255,.06);
-      color:var(--text);padding:9px 12px;border-radius:999px;font-size:13px;cursor:pointer;
+      appearance:none;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.08);
+      color:var(--text);
+      padding:9px 12px;
+      border-radius:999px;
+      cursor:pointer;
       transition:.15s transform, .15s background;
     }
-    button:hover{background:rgba(255,255,255,.09)}
-    button:active{transform: translateY(1px)}
-    .grid{margin-top:18px;display:grid;grid-template-columns: 420px 1fr;gap:14px;align-items:start;}
-    .card{
-      border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+    button:hover{transform:translateY(-1px);background: rgba(255,255,255,.12);}
+    button:active{transform:translateY(0px);}
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap:16px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr; }
+    }
+    .panel{
+      background: linear-gradient(135deg, rgba(255,255,255,.09), rgba(255,255,255,.05));
       border:1px solid var(--stroke);
-      box-shadow: 0 18px 50px rgba(0,0,0,.35);
+      border-radius: var(--radius);
+      padding:16px;
+      box-shadow: 0 14px 50px rgba(0,0,0,.45);
+      backdrop-filter: blur(12px);
+    }
+    .panel h2{
+      margin:0;
+      font-size:18px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .panel .hint{margin-top:2px;color:var(--muted);font-size:13px;}
+    .search{
+      margin-top:12px;
+      width:100%;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.22);
+      color:var(--text);
+      outline:none;
+    }
+    .list{
+      margin-top:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      max-height: 520px;
+      overflow:auto;
+      padding-right:6px;
+    }
+    .row{
+      padding:12px 12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.20);
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      transition:.15s background, .15s transform, .15s border-color;
+    }
+    .row:hover{background: rgba(0,0,0,.27); transform: translateY(-1px);}
+    .row.active{border-color: rgba(130,66,255,.55); box-shadow: 0 0 0 3px rgba(130,66,255,.18) inset;}
+    .row .meta{display:flex;flex-direction:column;gap:2px;}
+    .row .name{font-weight:700;}
+    .row .mini{font-size:12px;color:var(--muted);}
+    .money{font-weight:800;}
+    .money.good{color:var(--good);}
+    .money.bad{color:var(--bad);}
+    .detailHead{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .detailHead h3{margin:0;font-size:20px;}
+    .detailHead .total{font-weight:900;color:var(--muted);}
+    .empty{
+      margin-top:12px;
+      padding:16px;
+      border-radius:18px;
+      border:1px dashed rgba(255,255,255,.18);
+      color:rgba(238,240,255,.65);
+      background: rgba(0,0,0,.18);
+    }
+
+    /* Movie cards */
+    .sectionTitle{
+      margin:18px 0 8px;
+      letter-spacing:.12em;
+      font-size:12px;
+      text-transform:uppercase;
+      color:rgba(238,240,255,.55);
+    }
+    .cards{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap:12px;
+    }
+    @media (max-width: 980px){
+      .cards{grid-template-columns: repeat(2, minmax(0, 1fr));}
+    }
+    @media (max-width: 520px){
+      .cards{grid-template-columns: 1fr;}
+    }
+    .card{
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:18px;
       overflow:hidden;
+      position:relative;
+      min-height: 250px;
+    }
+
+    /* poster aspect ratio = 2:3 (taller) */
+    .poster{
+      width:100%;
+      aspect-ratio: 2 / 3;
+      background: rgba(255,255,255,.06);
+      display:block;
+      object-fit: cover;
+    }
+    .badge{
+      position:absolute;
+      top:10px; left:10px;
+      background: rgba(0,0,0,.45);
+      border:1px solid rgba(255,255,255,.16);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
       backdrop-filter: blur(10px);
     }
-    .cardHead{padding:16px 16px 10px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;gap:10px;}
-    .cardHead h2{margin:0;font-size:16px;letter-spacing:-.01em;}
-    .cardHead .hint{color:var(--muted2);font-size:12px;}
-    .cardBody{padding:14px 16px 16px;}
-    .search{width:100%;padding:10px 12px;border-radius: 12px;border:1px solid rgba(255,255,255,.10);background: rgba(0,0,0,.18);color:var(--text);outline:none;font-size:13px;}
-    .list{margin-top:12px;display:flex;flex-direction:column;gap:8px;max-height: 420px;overflow:auto;padding-right:6px;}
-    .list::-webkit-scrollbar{width:10px}
-    .list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.10);border-radius:999px}
-    .row{padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.09);background: rgba(0,0,0,.12);display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;}
-    .row:hover{background:rgba(255,255,255,.06)}
-    .row.active{outline:2px solid rgba(125,95,255,.35)}
-    .row .left{display:flex;flex-direction:column;gap:2px;min-width: 0;}
-    .row .name{font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .row .small{color:var(--muted2);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .money{font-variant-numeric: tabular-nums;font-weight:700;white-space:nowrap;}
-    .money.good{color:var(--good)}
-    .money.bad{color:var(--bad)}
-    .empty{padding:18px;border-radius: 16px;border:1px dashed rgba(255,255,255,.18);background: rgba(0,0,0,.12);color:var(--muted);font-size:13px;}
-    .sectionTitle{margin: 0 0 8px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted2);}
-    .posterGrid{display:grid;grid-template-columns: repeat(3, minmax(0, 1fr));gap:10px;margin-top:10px;}
-    .poster{
-      border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.10);background: rgba(0,0,0,.18);
-      position:relative;box-shadow: 0 12px 30px rgba(0,0,0,.35);
+    .badge.bomb{border-color: rgba(255,77,109,.45); color: rgba(255,220,228,.95);}
+    .badge.hit{border-color: rgba(57,217,138,.35); color: rgba(210,255,236,.95);}
+    .cardBody{
+      padding:10px 12px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
     }
-    .poster img{width:100%;height:210px;object-fit: cover;display:block;background: rgba(0,0,0,.2);}
-    .poster .cap{padding:8px 10px 10px;display:flex;flex-direction:column;gap:4px;}
-    .poster .title{font-size:12.5px;line-height:1.15;font-weight:650;color:var(--text);display:-webkit-box;-webkit-line-clamp: 2;-webkit-box-orient: vertical;overflow:hidden;min-height: 30px;}
-    .poster .subline{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px;align-items:center;}
-    .tag{
-      position:absolute;top:10px;left:10px;padding:6px 9px;border-radius:999px;background: rgba(0,0,0,.55);
-      border:1px solid rgba(255,255,255,.14);font-size:11px;color:var(--text);backdrop-filter: blur(6px);
+    .title{
+      font-weight:800;
+      line-height:1.15;
+      font-size:14px;
+      display:-webkit-box;
+      -webkit-line-clamp:2;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
+      min-height: 34px;
     }
-    .tag.bomb{background: rgba(255,90,122,.18); border-color: rgba(255,90,122,.35)}
-    .tag.hit{background: rgba(94,228,139,.14); border-color: rgba(94,228,139,.35)}
-    .upcomingWrap{margin-top:14px;border-radius: var(--radius);border:1px solid rgba(255,255,255,.10);background: rgba(0,0,0,.12);padding:14px 14px 12px;}
-    .upcomingHeader{display:flex;justify-content:space-between;gap:10px;align-items:flex-end;margin-bottom:10px;}
-    .upcomingHeader .title{margin:0;font-size:16px;font-weight:700;}
-    .upcomingHeader .desc{margin:0;color:var(--muted2);font-size:12.5px;}
-    .hscroll{display:flex;gap:12px;overflow:auto;padding-bottom:8px;scroll-snap-type: x mandatory;}
-    .hscroll::-webkit-scrollbar{height:10px}
-    .hscroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.10);border-radius:999px}
-    .mini{min-width: 160px;max-width: 160px;scroll-snap-align: start;}
-    .mini img{height:240px}
-    .datePill{
+    .subrow{
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      gap:10px;
+      color:rgba(238,240,255,.72);
+      font-size:12px;
+    }
+    .delta{font-weight:800;}
+    .delta.good{color:var(--good);}
+    .delta.bad{color:var(--bad);}
+
+    /* Upcoming scroller */
+    .upcoming{
+      margin-top:16px;
+      background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.045));
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      padding:14px 14px 10px;
+      box-shadow: 0 14px 50px rgba(0,0,0,.45);
+      backdrop-filter: blur(12px);
+    }
+    .upcomingHead{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .upcomingHead h2{margin:0;font-size:18px;}
+    .upcomingHead .hint{margin:0;color:var(--muted);font-size:13px;}
+    .rail{
+      margin-top:10px;
+      display:flex;
+      gap:12px;
+      overflow:auto;
+      padding-bottom:8px;
+      scroll-snap-type:x mandatory;
+    }
+    .pill{
+      flex:0 0 220px;
+      scroll-snap-align:start;
+      background: rgba(0,0,0,.20);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:18px;
+      overflow:hidden;
+      position:relative;
+      min-height: 320px;
+    }
+    .pill .poster{aspect-ratio: 2 / 3;}
+    .dateChip{
       position:absolute;
-      right:10px; top:10px;
-      padding:6px 9px;
+      top:10px; right:10px;
+      background: rgba(0,0,0,.45);
+      border:1px solid rgba(255,255,255,.16);
+      padding:6px 10px;
       border-radius:999px;
-      background: rgba(0,0,0,.55);
-      border:1px solid rgba(255,255,255,.14);
-      font-size:11px;
-      color:var(--text);
-      backdrop-filter: blur(6px);
+      font-size:12px;
+      backdrop-filter: blur(10px);
     }
-    .footerNote{margin-top:10px;color:var(--muted2);font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;}
-    .err{margin-top:12px;color:#ff9db0;font-size:13px;background: rgba(255,90,122,.12);border:1px solid rgba(255,90,122,.22);padding:10px 12px;border-radius:14px;display:none;white-space:pre-wrap;}
-    @media (max-width: 980px){
-      .grid{grid-template-columns: 1fr; }
-      .poster img{height:240px}
-      h1{font-size:38px}
+
+    .footerNote{
+      margin-top:10px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      color:rgba(238,240,255,.45);
+      font-size:12px;
     }
+    a{color:inherit}
   </style>
 </head>
-
 <body>
-  <div class="wrap">
+  <div class="shell">
     <div class="hero">
-      <div class="kicker">
-        <span class="dot"></span>
-        <span>Q1 • Split bombs • Live standings</span>
-      </div>
+      <div class="kicker"><span class="dot"></span> Q1 • SPLIT BOMBS • LIVE STANDINGS</div>
       <h1>Fantasy Box Office League</h1>
-      <p class="sub">
-        Scores update from your Google Sheet. Hits earn their own profit. Bombs are split across opponents (negative exposure).
-      </p>
+      <p class="sub">Scores update from your Google Sheet. Hits earn their own profit. Bombs are split across opponents (negative exposure).</p>
 
-      <div class="metaRow">
-        <div class="pills">
-          <span class="pill"><strong>Live</strong></span>
-          <span class="pill">Updated: <strong id="fbo-updated">—</strong></span>
-          <span class="pill"><span id="pillCount">0</span>&nbsp;players</span>
+      <div class="topbar">
+        <div class="chips">
+          <span class="chip"><span class="miniDot" style="background:var(--good)"></span> <span id="statusText">Live</span></span>
+          <span class="chip"><span class="miniDot"></span> Updated: <span id="updatedText">—</span></span>
+          <span class="chip"><span class="miniDot"></span> <span id="countText">0</span> players</span>
         </div>
-        <div class="btns">
-          <button id="btnRefresh">↻ Refresh now</button>
-          <button id="btnClear">× Clear selection</button>
+        <div class="actions">
+          <button id="refreshBtn">⟳ Refresh now</button>
+          <button id="clearBtn">× Clear selection</button>
         </div>
       </div>
+    </div>
 
-      <div class="err" id="fbo-error"></div>
-
-      <div class="grid">
-        <div class="card">
-          <div class="cardHead">
-            <div>
-              <h2>Standings</h2>
-              <div class="hint">Tap a player to expand</div>
-            </div>
-            <div class="hint" id="standingsMeta">—</div>
-          </div>
-          <div class="cardBody">
-            <input id="search" class="search" placeholder="Search players..." />
-            <div class="list" id="standings"></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="cardHead">
-            <div>
-              <h2 id="detailTitle">Select a player</h2>
-              <div class="hint">Their roster will appear here.</div>
-            </div>
-            <div class="hint" id="detailMeta"></div>
-          </div>
-          <div class="cardBody" id="detail">
-            <div class="empty">Pick someone on the left to view their hits + bomb exposure.</div>
-          </div>
-        </div>
+    <div class="grid">
+      <div class="panel">
+        <h2>Standings <span id="standingsMeta" class="hint"></span></h2>
+        <div class="hint">Tap a player to expand</div>
+        <input class="search" id="search" placeholder="Search players..." />
+        <div class="list" id="standingsList"></div>
       </div>
 
-      <div class="upcomingWrap">
-        <div class="upcomingHeader">
+      <div class="panel" id="detailPanel">
+        <div class="detailHead">
           <div>
-            <p class="title">Upcoming Releases</p>
-            <p class="desc">Only chosen, unreleased movies. Bombs show as “Bomb” (no names).</p>
+            <h3 id="detailName">Select a player</h3>
+            <div class="hint">Their roster will appear here.</div>
           </div>
+          <div class="total" id="detailTotal"></div>
         </div>
-        <div class="hscroll" id="upcoming"></div>
-      </div>
 
+        <div id="detailBody" class="empty">
+          Pick someone on the left to view their hits + bomb exposure.
+        </div>
+      </div>
+    </div>
+
+    <div class="upcoming">
+      <div class="upcomingHead">
+        <div>
+          <h2>Upcoming Releases</h2>
+          <p class="hint">Only chosen, unreleased movies. Bombs show as “Bomb” (no names).</p>
+        </div>
+      </div>
+      <div class="rail" id="upcomingRail"></div>
       <div class="footerNote">
-        <span>Hosted on GitHub Pages • Dark / Cinematic theme</span>
-        <span>Auto-refresh: every <strong>30s</strong> • Cache-bust enabled</span>
+        <div>Hosted on GitHub Pages • Dark / Cinematic theme</div>
+        <div>Auto-refresh: every <b>30s</b> • Cache-bust enabled</div>
       </div>
     </div>
   </div>
 
-  <script>
-    // ✅ Your working API CSV
-    const API_SHEET_URL =
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8g_VBKkleUsEkvhsj-Gs4Xsk5k9RifmPFUHw8Yq0_K5X8cca9p1or8TBNI5UbfglWT-A6uVSed_tX/pub?gid=784663852&single=true&output=csv";
+<script>
+/**
+ * REQUIRED:
+ * 1) Publish your API tab as CSV (this is your roster export)
+ * 2) Publish your MOVIES tab as CSV (for release dates + profits by title)
+ *
+ * You already have the API CSV. You must set MOVIES_CSV_URL to your published MOVIES CSV.
+ */
+const API_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8g_VBKkleUsEkvhsj-Gs4Xsk5k9RifmPFUHw8Yq0_K5X8cca9p1or8TBNI5UbfglWT-A6uVSed_tX/pub?gid=784663852&single=true&output=csv";
 
-    // 👇 PASTE your MOVIES tab CSV here (Publish to web → CSV for MOVIES sheet)
-    // It should include columns like: Movie, Release Date, Profit To Date, Poster URL (optional)
-    const MOVIES_SHEET_URL =
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8g_VBKkleUsEkvhsj-Gs4Xsk5k9RifmPFUHw8Yq0_K5X8cca9p1or8TBNI5UbfglWT-A6uVSed_tX/pub?gid=29963569&single=true&output=csv"; // <-- paste MOVIES CSV URL
+// TODO: replace with your MOVIES published CSV URL (must include columns for Movie, Poster URL, Release Date, Profit To Date, key)
+const MOVIES_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8g_VBKkleUsEkvhsj-Gs4Xsk5k9RifmPFUHw8Yq0_K5X8cca9p1or8TBNI5UbfglWT-A6uVSed_tX/pub?gid=29963569&single=true&output=csv";
 
-    const REFRESH_MS = 30000;
+/* ------------------ helpers ------------------ */
 
-    const els = {
-      err: document.getElementById("fbo-error"),
-      updated: document.getElementById("fbo-updated"),
-      count: document.getElementById("pillCount"),
-      standings: document.getElementById("standings"),
-      standingsMeta: document.getElementById("standingsMeta"),
-      search: document.getElementById("search"),
-      detail: document.getElementById("detail"),
-      detailTitle: document.getElementById("detailTitle"),
-      detailMeta: document.getElementById("detailMeta"),
-      upcoming: document.getElementById("upcoming"),
-      btnRefresh: document.getElementById("btnRefresh"),
-      btnClear: document.getElementById("btnClear"),
+// robust number parsing: handles "-27,500,000", "$-27,500,000", " -128.3M " (best-effort)
+function num(v){
+  const s = String(v ?? "").trim();
+  if(!s) return 0;
+
+  // handle already abbreviated like "128.3M"
+  const m = s.match(/^(-?\$?\s*\d+(\.\d+)?)([KMB])$/i);
+  if(m){
+    const base = parseFloat(m[1].replace(/\$/g,""));
+    const mult = m[3].toUpperCase()==="K" ? 1e3 : m[3].toUpperCase()==="M" ? 1e6 : 1e9;
+    return (isNaN(base) ? 0 : base*mult);
+  }
+
+  const cleaned = s
+    .replace(/\$/g,"")
+    .replace(/,/g,"")
+    .replace(/\s+/g,"");
+  const n = parseFloat(cleaned);
+  return isNaN(n) ? 0 : n;
+}
+
+function formatMoney(n){
+  const sign = n < 0 ? "-" : "";
+  const abs = Math.abs(n);
+  if(abs >= 1e9) return `${sign}$${(abs/1e9).toFixed(2)}B`;
+  if(abs >= 1e6) return `${sign}$${(abs/1e6).toFixed(1)}M`;
+  if(abs >= 1e3) return `${sign}$${(abs/1e3).toFixed(1)}K`;
+  return `${sign}$${abs.toFixed(0)}`;
+}
+
+function normKey(s){
+  return String(s ?? "")
+    .toLowerCase()
+    .trim()
+    .replace(/\u00a0/g," ")
+    .replace(/\s+/g," ")
+    .replace(/[’']/g,"'")
+    .replace(/–|—/g,"-")
+    .replace(/\s*:\s*/g,": ")
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+function parseCSV(text){
+  // handles simple CSV with quoted fields
+  const rows = [];
+  let cur = [], field = "", inQuotes = false;
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    if(c === '"'){
+      if(inQuotes && text[i+1] === '"'){ field += '"'; i++; }
+      else inQuotes = !inQuotes;
+    } else if(c === "," && !inQuotes){
+      cur.push(field); field="";
+    } else if((c === "\n" || c === "\r") && !inQuotes){
+      if(c === "\r" && text[i+1] === "\n") i++;
+      cur.push(field); field="";
+      // ignore empty trailing lines
+      if(cur.some(x => String(x).trim() !== "")) rows.push(cur);
+      cur = [];
+    } else {
+      field += c;
+    }
+  }
+  cur.push(field);
+  if(cur.some(x => String(x).trim() !== "")) rows.push(cur);
+  return rows;
+}
+
+function toObjects(csvText){
+  const rows = parseCSV(csvText);
+  if(rows.length < 2) return [];
+  // strip BOM on header cell
+  const header = rows[0].map(h => String(h ?? "").replace(/^\uFEFF/,"").trim());
+  return rows.slice(1).map(r => {
+    const o = {};
+    header.forEach((h,i)=> o[h] = (r[i] ?? "").trim());
+    return o;
+  });
+}
+
+function parseDateAny(v){
+  // expects something like "1/16/2026" from sheets
+  const s = String(v ?? "").trim();
+  if(!s) return null;
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function fmtShortDate(d){
+  if(!d) return "—";
+  return d.toLocaleDateString(undefined, { month:"short", day:"numeric" });
+}
+
+function safeImg(url){
+  const u = String(url ?? "").trim();
+  return u ? u : "";
+}
+
+/* ------------------ data loading ------------------ */
+
+let state = {
+  players: [],
+  moviesMap: new Map(), // key -> { title, poster, releaseDate, profit }
+  selected: null
+};
+
+async function fetchText(url){
+  const u = url + (url.includes("?") ? "&" : "?") + "cb=" + Date.now();
+  const res = await fetch(u, { cache:"no-store" });
+  if(!res.ok) throw new Error("Fetch failed: " + res.status);
+  return await res.text();
+}
+
+async function loadAll(){
+  const statusText = document.getElementById("statusText");
+  statusText.textContent = "Loading…";
+
+  const [apiText, moviesText] = await Promise.all([
+    fetchText(API_CSV_URL),
+    MOVIES_CSV_URL.startsWith("PASTE_") ? Promise.resolve("") : fetchText(MOVIES_CSV_URL),
+  ]);
+
+  const apiRows = toObjects(apiText);
+
+  // validate API headers
+  if(!apiRows.length || !Object.keys(apiRows[0]).some(h => h.toLowerCase() === "player")){
+    const found = Object.keys(apiRows[0] || {}).join(", ");
+    throw new Error(`CSV header missing "player". Found: ${found || "(none)"}`);
+  }
+
+  // MOVIES map (optional but needed for dates + per-title profit)
+  const moviesMap = new Map();
+  if(moviesText){
+    const mRows = toObjects(moviesText);
+    // try common column names you have:
+    // Movie | Poster URL | Release Date | Profit To Date | key
+    for(const r of mRows){
+      const key = normKey(r["key"] || r["Key"] || r["movie_key"] || r["Movie"] || r["movie"] || "");
+      if(!key) continue;
+      moviesMap.set(key, {
+        title: r["Movie"] || r["movie"] || "",
+        poster: r["Poster URL"] || r["Poster"] || r["poster_url"] || "",
+        releaseDate: parseDateAny(r["Release Date"] || r["release_date"] || r["Release"] || ""),
+        profit: num(r["Profit To Date"] || r["Profit"] || r["profit_to_date"] || "")
+      });
+    }
+  }
+
+  // normalize players
+  const players = apiRows.map(r => {
+    // allow case-insensitive access
+    const keys = Object.keys(r);
+    const get = (name) => {
+      const k = keys.find(x => x.toLowerCase() === name.toLowerCase());
+      return k ? r[k] : "";
     };
 
-    let state = {
-      players: [],
-      moviesByKey: new Map(), // key => {profit, date, poster}
-      selected: null,
-      lastCsvUrl: "",
+    const player = get("player");
+    const total = num(get("total"));
+    const hit_points = num(get("hit_points"));
+    const bomb_points = num(get("bomb_points"));
+
+    const hits = [1,2,3].map(i => ({
+      title: get(`hit${i}`),
+      poster: get(`hit${i}_poster`)
+    })).filter(x => String(x.title).trim() !== "");
+
+    const bombs = [1,2,3,4,5,6].map(i => ({
+      title: get(`bomb${i}`),
+      poster: get(`bomb${i}_poster`)
+    })).filter(x => String(x.title).trim() !== "");
+
+    return {
+      player,
+      total,
+      hit_points,
+      bomb_points,
+      hits,
+      bombs
     };
+  });
 
-    els.btnRefresh.addEventListener("click", () => build());
-    els.btnClear.addEventListener("click", () => { state.selected = null; renderAll(); });
-    els.search.addEventListener("input", () => renderStandings());
+  // sort standings high->low (bigger is better)
+  players.sort((a,b)=> b.total - a.total);
 
-    function showError(msg){ els.err.style.display = "block"; els.err.textContent = msg; }
-    function clearError(){ els.err.style.display = "none"; els.err.textContent = ""; }
+  state.players = players;
+  state.moviesMap = moviesMap;
 
-    function toCsvUrl(url){
-      if (!url) return "";
-      const u = String(url).trim();
-      if (u.includes("/pub") && u.includes("output=csv")) return u;
-      if (u.includes("/export?") && u.includes("format=csv")) return u;
+  document.getElementById("updatedText").textContent = new Date().toLocaleString();
+  document.getElementById("countText").textContent = String(players.length);
+  document.getElementById("standingsMeta").textContent = `${players.length} players`;
+  statusText.textContent = "Live";
 
-      const m = u.match(/https:\/\/docs\.google\.com\/spreadsheets\/d\/([^/]+)\/edit(?:.*?gid=(\d+))?/);
-      if (m){
-        const id = m[1];
-        const gid = m[2] || "0";
-        return `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${gid}`;
-      }
-      if (u.includes("/pubhtml")){
-        return u.replace("/pubhtml", "/pub").replace(/(\?|&)output=[^&]+/g,"") + (u.includes("?") ? "&" : "?") + "output=csv";
-      }
-      return u;
+  renderStandings();
+  renderUpcoming();
+  // keep selection if possible
+  if(state.selected){
+    const still = players.find(p => p.player === state.selected.player);
+    state.selected = still || null;
+    renderDetail();
+  } else {
+    renderDetail();
+  }
+}
+
+/* ------------------ rendering ------------------ */
+
+function renderStandings(){
+  const list = document.getElementById("standingsList");
+  list.innerHTML = "";
+
+  const q = document.getElementById("search").value.trim().toLowerCase();
+
+  state.players.forEach((p, idx) => {
+    if(q && !p.player.toLowerCase().includes(q)) return;
+
+    const row = document.createElement("div");
+    row.className = "row" + (state.selected && state.selected.player === p.player ? " active" : "");
+    row.onclick = () => { state.selected = p; renderStandings(); renderDetail(); };
+
+    const meta = document.createElement("div");
+    meta.className = "meta";
+
+    const name = document.createElement("div");
+    name.className = "name";
+    name.textContent = `#${idx+1} ${p.player}`;
+
+    const mini = document.createElement("div");
+    mini.className = "mini";
+    mini.textContent = `Hits: ${p.hits.length} • Bombs: ${p.bombs.length}`;
+
+    meta.appendChild(name);
+    meta.appendChild(mini);
+
+    const money = document.createElement("div");
+    money.className = "money " + (p.total >= 0 ? "good" : "bad");
+    money.textContent = formatMoney(p.total);
+
+    row.appendChild(meta);
+    row.appendChild(money);
+    list.appendChild(row);
+  });
+}
+
+function lookupProfit(title){
+  const key = normKey(title);
+  const m = state.moviesMap.get(key);
+  if(!m) return 0;
+  return num(m.profit);
+}
+
+function lookupReleaseDate(title){
+  const key = normKey(title);
+  const m = state.moviesMap.get(key);
+  return m ? m.releaseDate : null;
+}
+
+function lookupPosterFallback(title, posterFromApi){
+  const key = normKey(title);
+  const m = state.moviesMap.get(key);
+  return safeImg(posterFromApi || (m && m.poster) || "");
+}
+
+function isUnreleased(title){
+  // primary: Release Date > today
+  const rd = lookupReleaseDate(title);
+  const now = new Date();
+  if(rd) return rd.getTime() > new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+  // fallback: if no release date available, treat profit==0 as unreleased
+  return lookupProfit(title) === 0;
+}
+
+function renderDetail(){
+  const nameEl = document.getElementById("detailName");
+  const totalEl = document.getElementById("detailTotal");
+  const body = document.getElementById("detailBody");
+
+  if(!state.selected){
+    nameEl.textContent = "Select a player";
+    totalEl.textContent = "";
+    body.className = "empty";
+    body.textContent = "Pick someone on the left to view their hits + bomb exposure.";
+    return;
+  }
+
+  const p = state.selected;
+  nameEl.textContent = p.player;
+  totalEl.textContent = "Total: " + formatMoney(p.total);
+
+  body.className = "";
+  body.innerHTML = "";
+
+  // Summary card
+  const summary = document.createElement("div");
+  summary.className = "panel";
+  summary.style.padding = "14px";
+  summary.style.marginTop = "12px";
+  summary.innerHTML = `
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+      <div>
+        <div style="font-weight:900;font-size:16px">${p.player}</div>
+        <div style="color:var(--muted);font-size:13px;margin-top:2px">Hits: ${p.hits.length} • Bomb exposure: ${p.bombs.length}</div>
+      </div>
+      <div style="font-weight:900;font-size:18px;color:${p.total>=0?'var(--good)':'var(--bad)'}">${formatMoney(p.total)}</div>
+    </div>
+  `;
+  body.appendChild(summary);
+
+  // Hits
+  const hitsTitle = document.createElement("div");
+  hitsTitle.className = "sectionTitle";
+  hitsTitle.textContent = "HITS";
+  body.appendChild(hitsTitle);
+
+  const hitsWrap = document.createElement("div");
+  hitsWrap.className = "cards";
+  p.hits.forEach(h => {
+    const profit = lookupProfit(h.title);
+    const poster = lookupPosterFallback(h.title, h.poster);
+    hitsWrap.appendChild(movieCard({
+      type:"Hit",
+      badgeText: p.player,
+      badgeClass:"hit",
+      title: h.title,
+      poster,
+      profit,
+      label:"Hit"
+    }));
+  });
+  body.appendChild(hitsWrap);
+
+  // Bombs
+  const bombTitle = document.createElement("div");
+  bombTitle.className = "sectionTitle";
+  bombTitle.textContent = "BOMB EXPOSURE (SPLIT)";
+  body.appendChild(bombTitle);
+
+  const bombsWrap = document.createElement("div");
+  bombsWrap.className = "cards";
+  p.bombs.forEach(b => {
+    const profit = lookupProfit(b.title); // this will be negative/positive based on movie profit-to-date
+    const poster = lookupPosterFallback(b.title, b.poster);
+    bombsWrap.appendChild(movieCard({
+      type:"Bomb",
+      badgeText:"Bomb",
+      badgeClass:"bomb",
+      title: b.title,
+      poster,
+      profit,
+      label:"Exposure"
+    }));
+  });
+  body.appendChild(bombsWrap);
+}
+
+function movieCard({badgeText, badgeClass, title, poster, profit, label}){
+  const c = document.createElement("div");
+  c.className = "card";
+  const img = document.createElement("img");
+  img.className = "poster";
+  img.alt = title;
+  img.loading = "lazy";
+  img.referrerPolicy = "no-referrer";
+  img.src = poster || "";
+  img.onerror = () => { img.style.display="none"; };
+
+  const badge = document.createElement("div");
+  badge.className = "badge " + badgeClass;
+  badge.textContent = badgeText;
+
+  const body = document.createElement("div");
+  body.className = "cardBody";
+
+  const t = document.createElement("div");
+  t.className = "title";
+  t.textContent = title;
+
+  const sub = document.createElement("div");
+  sub.className = "subrow";
+
+  const left = document.createElement("div");
+  left.textContent = label;
+
+  const right = document.createElement("div");
+  right.className = "delta " + (profit >= 0 ? "good" : "bad");
+  right.textContent = formatMoney(profit);
+
+  sub.appendChild(left);
+  sub.appendChild(right);
+
+  body.appendChild(t);
+  body.appendChild(sub);
+
+  c.appendChild(img);
+  c.appendChild(badge);
+  c.appendChild(body);
+  return c;
+}
+
+function renderUpcoming(){
+  const rail = document.getElementById("upcomingRail");
+  rail.innerHTML = "";
+
+  // If MOVIES_CSV_URL isn't set, we can't do dates properly
+  const hasMovies = state.moviesMap && state.moviesMap.size > 0;
+
+  // gather all chosen movies from API (hits + bombs), de-dupe by normalized key
+  const picked = new Map(); // key -> {title, poster, kind, ownerLabel}
+  for(const p of state.players){
+    for(const h of p.hits){
+      const key = normKey(h.title);
+      picked.set(key, {
+        title: h.title,
+        poster: lookupPosterFallback(h.title, h.poster),
+        kind: "Hit",
+        ownerLabel: p.player
+      });
     }
-
-    function parseCSV(text){
-      const s = String(text || "");
-      if (s.trim().startsWith("<!DOCTYPE") || s.includes("<html") || s.includes("<head")){
-        throw new Error("Sheet did not return CSV (got HTML). Make sure the sheet/tab is public OR published to web as CSV.");
-      }
-      const t = s.replace(/^\uFEFF/, "");
-      const rows = [];
-      let row = [];
-      let cell = "";
-      let inQuotes = false;
-
-      for (let i=0; i<t.length; i++){
-        const ch = t[i];
-        if (inQuotes){
-          if (ch === '"'){
-            if (t[i+1] === '"'){ cell += '"'; i++; }
-            else { inQuotes = false; }
-          } else cell += ch;
-        } else {
-          if (ch === '"') inQuotes = true;
-          else if (ch === ","){ row.push(cell); cell=""; }
-          else if (ch === "\n"){ row.push(cell); rows.push(row); row=[]; cell=""; }
-          else if (ch === "\r") {}
-          else cell += ch;
-        }
-      }
-      row.push(cell); rows.push(row);
-
-      while (rows.length && rows[rows.length-1].every(c => String(c||"").trim() === "")) rows.pop();
-      return rows;
-    }
-
-    function pickHeaderRow(rows){
-      for (let i=0; i<rows.length; i++){
-        const r = rows[i].map(c => String(c||"").toLowerCase().trim());
-        if (r.includes("player") || r.includes("movie")) return i;
-      }
-      return 0;
-    }
-
-    function rowsToObjects(rows){
-      const headerRowIndex = pickHeaderRow(rows);
-      const header = rows[headerRowIndex].map(h => String(h||"").toLowerCase().trim());
-      const data = [];
-      for (let i=headerRowIndex+1; i<rows.length; i++){
-        const r = rows[i];
-        const o = {};
-        for (let c=0; c<header.length; c++){
-          const key = header[c] || `col_${c}`;
-          o[key] = String(r[c] ?? "").trim();
-        }
-        data.push(o);
-      }
-      return { header, data };
-    }
-
-    async function fetchCsvObjects(url){
-      const csvUrl = toCsvUrl(url);
-      const bust = csvUrl + (csvUrl.includes("?") ? "&" : "?") + "cb=" + Date.now();
-      const r = await fetch(bust, { cache: "no-store" });
-      const text = await r.text();
-      const rows = parseCSV(text);
-      const { header, data } = rowsToObjects(rows);
-      return { header, data, csvUrl };
-    }
-
-    function normalizeKey(str){
-      return String(str || "")
-        .replace(/\u00A0/g, " ")
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, " ")
-        .replace(/[“”]/g, '"')
-        .replace(/[’]/g, "'")
-        .replace(/\s*:\s*/g, ": ")
-        .replace(/\s*-\s*/g, " - ");
-    }
-
-    function num(x){
-      const n = Number(String(x||"").replace(/[$,]/g,""));
-      return Number.isFinite(n) ? n : 0;
-    }
-
-    function fmtMoney(n){
-      const sign = n < 0 ? "-" : "";
-      const abs = Math.abs(n);
-      const fmt = (v, suf) => sign + "$" + v.toFixed(1).replace(/\.0$/, "") + suf;
-      if (abs >= 1e9) return fmt(abs/1e9, "B");
-      if (abs >= 1e6) return fmt(abs/1e6, "M");
-      if (abs >= 1e3) return fmt(abs/1e3, "K");
-      return sign + "$" + abs.toFixed(0);
-    }
-    function moneyClass(n){ if (n>0) return "good"; if (n<0) return "bad"; return ""; }
-    function safeImg(url){ const u = String(url || "").trim(); return u ? u : ""; }
-
-    // Date formatting helpers
-    function parseDateLoose(s){
-      const v = String(s||"").trim();
-      if (!v) return null;
-
-      // Try native first
-      const d1 = new Date(v);
-      if (!isNaN(d1.getTime())) return d1;
-
-      // Try M/D/YYYY
-      const m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-      if (m){
-        const mm = Number(m[1]) - 1;
-        const dd = Number(m[2]);
-        const yy = Number(m[3]);
-        const d2 = new Date(yy, mm, dd);
-        return isNaN(d2.getTime()) ? null : d2;
-      }
-
-      return null;
-    }
-    function fmtShortDate(d){
-      if (!d) return "";
-      return d.toLocaleDateString(undefined, { month:"short", day:"numeric" });
-    }
-
-    function getMovieMeta(title){
-      const k = normalizeKey(title);
-      return state.moviesByKey.get(k) || { profit: 0, date: null, poster: "" };
-    }
-    function movieProfit(title){ return getMovieMeta(title).profit || 0; }
-    function movieDate(title){ return getMovieMeta(title).date || null; }
-    function moviePosterFallback(title){ return getMovieMeta(title).poster || ""; }
-
-    function makePosterCard(movie, ownerLabel, showProfit, showDate){
-      const wrap = document.createElement("div");
-      wrap.className = "poster";
-
-      const tag = document.createElement("div");
-      tag.className = "tag " + (movie.kind === "Bomb" ? "bomb" : "hit");
-      tag.textContent = ownerLabel; // "Will" or "Bomb"
-      wrap.appendChild(tag);
-
-      if (showDate){
-        const d = movieDate(movie.title);
-        const pill = document.createElement("div");
-        pill.className = "datePill";
-        pill.textContent = d ? fmtShortDate(d) : "—";
-        wrap.appendChild(pill);
-      }
-
-      const img = document.createElement("img");
-      img.alt = movie.title || "";
-
-      // prefer poster on the row; fallback to MOVIES poster
-      const src = safeImg(movie.poster) || safeImg(moviePosterFallback(movie.title));
-      if (src) img.src = src;
-      else img.style.background = "linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03))";
-      wrap.appendChild(img);
-
-      const cap = document.createElement("div");
-      cap.className = "cap";
-
-      const t = document.createElement("div");
-      t.className = "title";
-      t.textContent = movie.title || "";
-      cap.appendChild(t);
-
-      const sub = document.createElement("div");
-      sub.className = "subline";
-
-      const left = document.createElement("span");
-      left.textContent = movie.kind === "Bomb" ? "Exposure" : "Hit";
-      left.style.color = "var(--muted2)";
-      sub.appendChild(left);
-
-      const right = document.createElement("span");
-      if (showProfit){
-        const p = movieProfit(movie.title);
-        right.textContent = fmtMoney(p);
-        right.style.fontWeight = "750";
-        right.style.color = p > 0 ? "var(--good)" : (p < 0 ? "var(--bad)" : "var(--muted)");
+    for(const b of p.bombs){
+      const key = normKey(b.title);
+      if(!picked.has(key)){
+        picked.set(key, {
+          title: b.title,
+          poster: lookupPosterFallback(b.title, b.poster),
+          kind: "Bomb",
+          ownerLabel: "Bomb" // no names for bombs
+        });
       } else {
-        right.textContent = "";
-      }
-      sub.appendChild(right);
-
-      cap.appendChild(sub);
-      wrap.appendChild(cap);
-
-      return wrap;
-    }
-
-    async function build(){
-      clearError();
-
-      try{
-        // 1) API players
-        const api = await fetchCsvObjects(API_SHEET_URL);
-
-        if (!api.header.includes("player")){
-          throw new Error(`CSV header missing "player". Found: ${api.header.slice(0,16).join(", ")}`);
-        }
-
-        const players = api.data
-          .map(o => ({
-            player: o.player || "",
-            total: num(o.total),
-            hit_points: num(o.hit_points),
-            bomb_points: num(o.bomb_points),
-            hits: [
-              { title: o.hit1, poster: o.hit1_poster, kind:"Hit" },
-              { title: o.hit2, poster: o.hit2_poster, kind:"Hit" },
-              { title: o.hit3, poster: o.hit3_poster, kind:"Hit" },
-            ].filter(x => String(x.title||"").trim() !== ""),
-            bombs: [
-              { title: o.bomb1, poster: o.bomb1_poster, kind:"Bomb" },
-              { title: o.bomb2, poster: o.bomb2_poster, kind:"Bomb" },
-              { title: o.bomb3, poster: o.bomb3_poster, kind:"Bomb" },
-              { title: o.bomb4, poster: o.bomb4_poster, kind:"Bomb" },
-              { title: o.bomb5, poster: o.bomb5_poster, kind:"Bomb" },
-              { title: o.bomb6, poster: o.bomb6_poster, kind:"Bomb" },
-            ].filter(x => String(x.title||"").trim() !== ""),
-          }))
-          .filter(p => p.player);
-
-        // 2) MOVIES meta map (profit + release date)
-        const moviesMap = new Map();
-
-        if (MOVIES_SHEET_URL && MOVIES_SHEET_URL.trim()){
-          const mv = await fetchCsvObjects(MOVIES_SHEET_URL);
-          const h = mv.header;
-
-          const movieCol =
-            h.includes("key") ? "key" :
-            h.includes("movie") ? "movie" :
-            h.includes("title") ? "title" :
-            null;
-
-          const profitCol =
-            h.includes("profit to date") ? "profit to date" :
-            h.includes("profit_to_date") ? "profit_to_date" :
-            h.includes("profit") ? "profit" :
-            null;
-
-          const dateCol =
-            h.includes("release date") ? "release date" :
-            h.includes("releasedate") ? "releasedate" :
-            h.includes("release_date") ? "release_date" :
-            h.includes("date") ? "date" :
-            null;
-
-          const posterCol =
-            h.includes("poster url") ? "poster url" :
-            h.includes("poster") ? "poster" :
-            h.includes("poster_url") ? "poster_url" :
-            null;
-
-          if (!movieCol) throw new Error("MOVIES CSV needs a Movie column (or Key).");
-          if (!dateCol) throw new Error('MOVIES CSV needs a "Release Date" column.');
-          // profit optional — but recommended
-          mv.data.forEach(o => {
-            const key = normalizeKey(o[movieCol]);
-            const profit = profitCol ? num(o[profitCol]) : 0;
-            const date = parseDateLoose(o[dateCol]);
-            const poster = posterCol ? String(o[posterCol]||"").trim() : "";
-            if (key) moviesMap.set(key, { profit, date, poster });
-          });
-        }
-
-        state.players = players.sort((a,b) => b.total - a.total);
-        state.moviesByKey = moviesMap;
-
-        els.updated.textContent = new Date().toLocaleString();
-        els.count.textContent = String(state.players.length);
-        els.standingsMeta.textContent = `${state.players.length} players`;
-
-        if (state.selected && !state.players.find(p => p.player === state.selected)){
-          state.selected = null;
-        }
-
-        renderAll();
-      } catch (err){
-        showError(`Data load error:\n${err.message}`);
-        state.players = [];
-        renderAll();
-        console.error(err);
+        // If already a Hit somewhere, keep as Hit (owner label)
       }
     }
+  }
 
-    function renderAll(){
-      renderStandings();
-      renderDetail();
-      renderUpcoming();
-    }
+  // filter unreleased
+  const items = Array.from(picked.values())
+    .filter(it => isUnreleased(it.title))
+    .map(it => {
+      const rd = lookupReleaseDate(it.title);
+      return { ...it, releaseDate: rd };
+    })
+    // sort by date if available, else bottom
+    .sort((a,b)=>{
+      const ta = a.releaseDate ? a.releaseDate.getTime() : 9e15;
+      const tb = b.releaseDate ? b.releaseDate.getTime() : 9e15;
+      return ta - tb;
+    });
 
-    function renderStandings(){
-      const q = String(els.search.value || "").toLowerCase().trim();
-      const list = state.players.filter(p => p.player.toLowerCase().includes(q));
-      els.standings.innerHTML = "";
+  if(!items.length){
+    const empty = document.createElement("div");
+    empty.style.color = "rgba(238,240,255,.6)";
+    empty.style.padding = "10px 4px";
+    empty.textContent = hasMovies
+      ? "No upcoming chosen releases found (check Release Date / Profit settings)."
+      : "Set MOVIES_CSV_URL to enable upcoming release dates.";
+    rail.appendChild(empty);
+    return;
+  }
 
-      if (!list.length){
-        const div = document.createElement("div");
-        div.className = "empty";
-        div.textContent = state.players.length ? "No matches." : "No players loaded yet.";
-        els.standings.appendChild(div);
-        return;
-      }
+  for(const it of items){
+    const pill = document.createElement("div");
+    pill.className = "pill";
 
-      list.forEach(p => {
-        const row = document.createElement("div");
-        row.className = "row" + (state.selected === p.player ? " active" : "");
-        row.addEventListener("click", () => { state.selected = p.player; renderAll(); });
+    const img = document.createElement("img");
+    img.className = "poster";
+    img.loading = "lazy";
+    img.referrerPolicy = "no-referrer";
+    img.alt = it.title;
+    img.src = it.poster || "";
+    img.onerror = ()=>{ img.style.display="none"; };
 
-        const left = document.createElement("div");
-        left.className = "left";
+    const badge = document.createElement("div");
+    badge.className = "badge " + (it.kind === "Hit" ? "hit" : "bomb");
+    badge.textContent = (it.kind === "Hit") ? it.ownerLabel : "Bomb";
 
-        const name = document.createElement("div");
-        name.className = "name";
-        const rank = state.players.findIndex(x => x.player === p.player) + 1;
-        name.textContent = `#${rank} ${p.player}`;
-        left.appendChild(name);
+    const dateChip = document.createElement("div");
+    dateChip.className = "dateChip";
+    dateChip.textContent = it.releaseDate ? fmtShortDate(it.releaseDate) : "—";
 
-        const small = document.createElement("div");
-        small.className = "small";
-        small.textContent = `Hits: ${p.hits.length}  •  Bombs: ${p.bombs.length}`;
-        left.appendChild(small);
+    const body = document.createElement("div");
+    body.className = "cardBody";
 
-        const right = document.createElement("div");
-        const m = document.createElement("div");
-        m.className = "money " + moneyClass(p.total);
-        m.textContent = fmtMoney(p.total);
-        right.appendChild(m);
+    const t = document.createElement("div");
+    t.className = "title";
+    t.textContent = it.title;
 
-        row.appendChild(left);
-        row.appendChild(right);
-        els.standings.appendChild(row);
-      });
-    }
+    const sub = document.createElement("div");
+    sub.className = "subrow";
+    sub.innerHTML = `<div>${it.kind}</div><div style="color:rgba(238,240,255,.55)">${it.releaseDate ? it.releaseDate.getFullYear() : ""}</div>`;
 
-    function renderDetail(){
-      const p = state.players.find(x => x.player === state.selected);
+    body.appendChild(t);
+    body.appendChild(sub);
 
-      if (!p){
-        els.detailTitle.textContent = "Select a player";
-        els.detailMeta.textContent = "";
-        els.detail.innerHTML = `<div class="empty">Pick someone on the left to view their hits + bomb exposure.</div>`;
-        return;
-      }
+    pill.appendChild(img);
+    pill.appendChild(badge);
+    pill.appendChild(dateChip);
+    pill.appendChild(body);
 
-      els.detailTitle.textContent = p.player;
-      els.detailMeta.textContent = `Total: ${fmtMoney(p.total)}`;
+    rail.appendChild(pill);
+  }
+}
 
-      const root = document.createElement("div");
+/* ------------------ events / init ------------------ */
 
-      const top = document.createElement("div");
-      top.className = "empty";
-      top.style.borderStyle = "solid";
-      top.style.borderColor = "rgba(255,255,255,.10)";
-      top.style.background = "rgba(0,0,0,.10)";
-      top.innerHTML = `
-        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;">
-          <div style="font-weight:750;">${p.player}</div>
-          <div class="money ${moneyClass(p.total)}" style="font-size:14px;">${fmtMoney(p.total)}</div>
-        </div>
-        <div style="margin-top:6px;color:var(--muted2);font-size:12px;">
-          Hits: <strong style="color:var(--text)">${p.hits.length}</strong> • Bomb exposure: <strong style="color:var(--text)">${p.bombs.length}</strong>
-        </div>
-      `;
-      root.appendChild(top);
+document.getElementById("refreshBtn").addEventListener("click", () => {
+  loadAll().catch(showError);
+});
 
-      const hitsTitle = document.createElement("div");
-      hitsTitle.className = "sectionTitle";
-      hitsTitle.style.marginTop = "14px";
-      hitsTitle.textContent = "Hits";
-      root.appendChild(hitsTitle);
+document.getElementById("clearBtn").addEventListener("click", () => {
+  state.selected = null;
+  renderStandings();
+  renderDetail();
+});
 
-      const hitsGrid = document.createElement("div");
-      hitsGrid.className = "posterGrid";
-      p.hits.forEach(m => hitsGrid.appendChild(makePosterCard(m, p.player, true, false)));
-      root.appendChild(hitsGrid);
+document.getElementById("search").addEventListener("input", renderStandings);
 
-      const bombsTitle = document.createElement("div");
-      bombsTitle.className = "sectionTitle";
-      bombsTitle.style.marginTop = "14px";
-      bombsTitle.textContent = "Bomb Exposure (split)";
-      root.appendChild(bombsTitle);
+function showError(err){
+  document.getElementById("statusText").textContent = "Error";
+  document.getElementById("updatedText").textContent = "—";
+  const hero = document.querySelector(".hero");
+  const box = document.createElement("div");
+  box.style.marginTop = "12px";
+  box.style.padding = "12px 14px";
+  box.style.borderRadius = "18px";
+  box.style.border = "1px solid rgba(255,77,109,.35)";
+  box.style.background = "rgba(255,77,109,.10)";
+  box.style.color = "rgba(255,220,228,.95)";
+  box.innerHTML = `<b>Data load error:</b><br>${String(err.message || err)}<br><br><span style="color:rgba(238,240,255,.65)">Tip: open your CSV URL directly and confirm it shows comma-separated text with headers + rows.</span>`;
+  // remove previous error boxes
+  hero.querySelectorAll(".errbox").forEach(n=>n.remove());
+  box.className = "errbox";
+  hero.appendChild(box);
+  console.error(err);
+}
 
-      const bombsGrid = document.createElement("div");
-      bombsGrid.className = "posterGrid";
-      p.bombs.forEach(m => bombsGrid.appendChild(makePosterCard(m, "Bomb", true, false)));
-      root.appendChild(bombsGrid);
-
-      els.detail.innerHTML = "";
-      els.detail.appendChild(root);
-    }
-
-    function renderUpcoming(){
-      els.upcoming.innerHTML = "";
-
-      if (!MOVIES_SHEET_URL || !MOVIES_SHEET_URL.trim()){
-        const div = document.createElement("div");
-        div.className = "empty";
-        div.textContent = "To show dates here, publish your MOVIES tab to CSV and paste the URL into MOVIES_SHEET_URL in the code.";
-        els.upcoming.appendChild(div);
-        return;
-      }
-
-      // Only chosen movies: from API players, de-dupe by title
-      // Only unreleased: profit == 0 (your rule)
-      const seen = new Set();
-      const items = [];
-
-      state.players.forEach(p => {
-        p.hits.forEach(m => {
-          const k = normalizeKey(m.title);
-          if (!k || seen.has(k)) return;
-          seen.add(k);
-          const meta = getMovieMeta(m.title);
-          if ((meta.profit || 0) === 0){
-            items.push({ ...m, owner: p.player, kind:"Hit", date: meta.date });
-          }
-        });
-      });
-
-      state.players.forEach(p => {
-        p.bombs.forEach(m => {
-          const k = normalizeKey(m.title);
-          if (!k || seen.has(k)) return;
-          seen.add(k);
-          const meta = getMovieMeta(m.title);
-          if ((meta.profit || 0) === 0){
-            items.push({ ...m, owner: "Bomb", kind:"Bomb", date: meta.date });
-          }
-        });
-      });
-
-      // Sort by release date
-      items.sort((a,b) => {
-        const da = a.date ? a.date.getTime() : 9e18;
-        const db = b.date ? b.date.getTime() : 9e18;
-        return da - db;
-      });
-
-      if (!items.length){
-        const div = document.createElement("div");
-        div.className = "empty";
-        div.textContent = "No upcoming chosen movies found (profit = 0).";
-        els.upcoming.appendChild(div);
-        return;
-      }
-
-      items.forEach(m => {
-        const mini = document.createElement("div");
-        mini.className = "mini";
-        const label = (m.kind === "Bomb") ? "Bomb" : m.owner;
-        mini.appendChild(makePosterCard(m, label, false, true)); // showDate=true
-        els.upcoming.appendChild(mini);
-      });
-    }
-
-    build();
-    setInterval(build, REFRESH_MS);
-  </script>
+loadAll().catch(showError);
+setInterval(() => loadAll().catch(showError), 30000);
+</script>
 </body>
 </html>
