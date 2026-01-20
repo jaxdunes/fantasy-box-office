@@ -4,850 +4,1064 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Fantasy Box Office League</title>
-
   <style>
     :root{
       --bg0:#070815;
-      --bg1:#0b0f25;
-      --card: rgba(255,255,255,.06);
-      --stroke: rgba(255,255,255,.12);
+      --bg1:#0a0b1a;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,255,255,.14);
       --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.65);
-      --muted2: rgba(255,255,255,.45);
-      --accent:#8b5cf6;
-      --good:#22c55e;
-      --bad:#ef4444;
-      --shadow: 0 20px 50px rgba(0,0,0,.55);
-      --radius: 18px;
-      --radius2: 26px;
+      --muted: rgba(255,255,255,.62);
+      --muted2: rgba(255,255,255,.44);
+      --good: rgba(140,255,190,.95);
+      --bad: rgba(255,150,150,.95);
+      --warn: rgba(255,220,140,.95);
+      --shadow: 0 22px 60px rgba(0,0,0,.55);
+      --shadow2: 0 12px 28px rgba(0,0,0,.35);
+      --r: 18px;
+      --r2: 22px;
+      --pad: 18px;
+      --posterW: 160px;
     }
+
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
       color: var(--text);
       background:
-        radial-gradient(1200px 800px at 10% 10%, rgba(139,92,246,.28), transparent 60%),
-        radial-gradient(900px 600px at 70% 20%, rgba(34,197,94,.18), transparent 55%),
-        radial-gradient(800px 700px at 40% 70%, rgba(59,130,246,.12), transparent 60%),
+        radial-gradient(1200px 700px at 22% 12%, rgba(140,120,255,.25), transparent 60%),
+        radial-gradient(1000px 600px at 78% 22%, rgba(50,220,200,.18), transparent 55%),
+        radial-gradient(900px 700px at 55% 80%, rgba(255,120,160,.12), transparent 55%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
-      min-height:100vh;
+      overflow-x:hidden;
     }
 
-    .wrap{max-width:1120px;margin:48px auto;padding:0 18px}
+    .wrap{
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 34px 18px 60px;
+    }
+
     .hero{
-      border:1px solid var(--stroke);
+      border-radius: 28px;
+      padding: 26px 26px 22px;
       background:
-        radial-gradient(700px 450px at 15% 30%, rgba(139,92,246,.35), transparent 65%),
-        radial-gradient(700px 450px at 70% 10%, rgba(34,197,94,.22), transparent 70%),
-        rgba(255,255,255,.04);
-      border-radius: var(--radius2);
+        radial-gradient(900px 260px at 25% 10%, rgba(170,130,255,.22), transparent 55%),
+        radial-gradient(900px 260px at 75% 10%, rgba(80,220,210,.18), transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      border: 1px solid rgba(255,255,255,.10);
       box-shadow: var(--shadow);
-      padding:28px 26px 22px;
+      backdrop-filter: blur(12px);
     }
-    .kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted2)}
-    h1{margin:10px 0 6px;font-size:40px;line-height:1.05}
-    .sub{margin:0;color:var(--muted);max-width:80ch;font-size:14px}
 
-    .metaRow{
-      margin-top:16px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:space-between;
-    }
-    .chips{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .chip{
-      display:inline-flex;gap:8px;align-items:center;
-      padding:8px 12px;border-radius:999px;
-      border:1px solid var(--stroke);
-      background: rgba(0,0,0,.18);
-      color: var(--muted);
-      font-size:13px;
+    .kicker{
+      display:flex; align-items:center; gap:10px;
+      font-size: 12px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.60);
+      margin-bottom: 10px;
     }
     .dot{
-      width:8px;height:8px;border-radius:999px;background: var(--good);
-      box-shadow:0 0 0 3px rgba(34,197,94,.18);
+      width:8px;height:8px;border-radius:99px;background: rgba(90,255,180,.9);
+      box-shadow: 0 0 0 6px rgba(90,255,180,.12);
     }
-    .btns{display:flex;gap:10px;flex-wrap:wrap}
-    button{
-      cursor:pointer;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      padding:9px 12px;
+    h1{
+      margin:0;
+      font-size: 44px;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+    .sub{
+      margin-top:10px;
+      max-width: 70ch;
+      color: rgba(255,255,255,.70);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .topbar{
+      margin-top: 16px;
+      display:flex;
+      flex-wrap: wrap;
+      align-items:center;
+      gap: 10px;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:10px;
+      padding: 8px 12px;
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.12);
       border-radius: 999px;
-      font-size:13px;
+      color: rgba(255,255,255,.78);
+      font-size: 12px;
     }
-    button:hover{background: rgba(255,255,255,.09)}
+    .pill strong{color: rgba(255,255,255,.92); font-weight: 650;}
+    .btn{
+      appearance:none;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.88);
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor:pointer;
+      transition: transform .06s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+    }
+    .btn:hover{background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.18);}
+    .btn:active{transform: translateY(1px);}
 
-    /* Upcoming scroller */
-    .sectionCard{
-      margin-top:16px;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.04);
-      border-radius: var(--radius);
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
-      overflow:hidden;
-    }
-    .sectionHead{
-      padding:14px 16px 10px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;
-    }
-    .sectionTitle{font-weight:700}
-    .sectionSub{color:var(--muted2);font-size:12px;margin-top:2px}
-    .scroller{
-      padding:12px 12px 14px;
-      display:flex;
-      gap:12px;
-      overflow:auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-    }
-    .scroller::-webkit-scrollbar{height:10px}
-    .scroller::-webkit-scrollbar-thumb{background:rgba(255,255,255,.10);border-radius:999px}
-    .scroller::-webkit-scrollbar-track{background:rgba(0,0,0,.12);border-radius:999px}
-
-    .movieCard{
-      min-width: 420px;
-      max-width: 520px;
-      scroll-snap-align: start;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.14);
-      border-radius: 18px;
-      padding:12px;
-      display:flex;
-      gap:12px;
-      align-items:flex-start;
-    }
-    @media (max-width: 520px){
-      .movieCard{min-width: 320px}
-    }
-
-    .poster{
-      width: 92px;
-      aspect-ratio: 2 / 3; /* REAL poster shape */
-      border-radius: 14px;
-      overflow:hidden;
-      background:
-        radial-gradient(120px 120px at 30% 20%, rgba(139,92,246,.25), transparent 70%),
-        radial-gradient(120px 120px at 70% 50%, rgba(34,197,94,.18), transparent 70%),
-        rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.10);
-      flex: 0 0 auto;
-    }
-    .poster img{
-      width:100%;height:100%;
-      object-fit:cover;
-      display:block;
-    }
-
-    .movieMeta{flex:1 1 auto;min-width:0}
-    .movieTop{
-      display:flex;gap:10px;justify-content:space-between;align-items:flex-start;
-    }
-    .movieTitle{
-      font-weight:750;
-      font-size:20px;
-      line-height:1.1;
-      margin:2px 0 6px;
-      word-break: break-word;
-    }
-    .movieDate{
-      font-size:18px;
-      color: var(--text);
-      opacity:.9;
-      white-space:nowrap;
-      padding-left:8px;
-    }
-
-    .tags{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:6px;
-      align-items:center;
-    }
-    .tag{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:7px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.16);
-      color: var(--muted);
-      font-size:12px;
-      white-space:nowrap;
-    }
-    .avatar{
-      width:22px;height:22px;border-radius:999px;
-      display:inline-flex;align-items:center;justify-content:center;
-      font-weight:800;font-size:12px;
-      border:1px solid rgba(255,255,255,.22);
-      background: rgba(255,255,255,.08);
-      color: rgba(255,255,255,.90);
-    }
-    .pillHit{border-color: rgba(34,197,94,.35); color: rgba(255,255,255,.85)}
-    .pillBomb{border-color: rgba(239,68,68,.35); color: rgba(255,255,255,.85)}
-    .dotHit{width:8px;height:8px;border-radius:999px;background:var(--good)}
-    .dotBomb{width:8px;height:8px;border-radius:999px;background:var(--bad)}
-
-    /* Main layout */
     .grid{
-      margin-top:14px;
       display:grid;
       grid-template-columns: 360px 1fr;
-      gap:14px;
-      align-items:start;
+      gap: 16px;
+      margin-top: 18px;
     }
-    @media (max-width: 920px){ .grid{grid-template-columns:1fr} }
+    @media (max-width: 980px){
+      .grid{grid-template-columns: 1fr;}
+    }
 
-    .panel{
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.04);
-      border-radius: var(--radius);
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    .card{
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: var(--r2);
+      box-shadow: 0 18px 50px rgba(0,0,0,.38);
+      backdrop-filter: blur(12px);
       overflow:hidden;
     }
-    .panelHead{
-      padding:14px 14px 10px;
-      display:flex;justify-content:space-between;align-items:flex-end;
-      border-bottom:1px solid rgba(255,255,255,.08);
+    .card h2{
+      margin:0;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
     }
-    .panelTitle{font-weight:700}
-    .panelSub{color:var(--muted2);font-size:12px;margin-top:2px}
-    .panelBody{padding:12px 14px 14px}
+    .card .head{
+      padding: 14px 14px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.09);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+    }
+    .hint{
+      color: rgba(255,255,255,.55);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+    .body{padding: 14px;}
 
     .search{
       width:100%;
-      padding:10px 12px;
+      padding: 10px 12px;
       border-radius: 12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.20);
-      color: var(--text);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: rgba(255,255,255,.90);
       outline:none;
-      font-size:13px;
+      font-size: 13px;
     }
+    .search::placeholder{color: rgba(255,255,255,.40);}
 
-    .list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
-    .rowBtn{
-      text-align:left;
-      display:flex;justify-content:space-between;align-items:center;
-      gap:10px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.12);
+    .standings{
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+      margin-top: 10px;
     }
-    .rowBtn:hover{background: rgba(255,255,255,.06)}
-    .rank{color:var(--muted2);font-size:12px}
-    .name{font-weight:700}
-    .score{font-variant-numeric: tabular-nums; color: var(--text)}
-    .neg{color: #fb7185}
-    .pos{color:#86efac}
-
-    .detailTop{
-      display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
-      padding:14px 14px 10px;border-bottom:1px solid rgba(255,255,255,.08);
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      cursor:pointer;
+      transition: background .2s ease, border-color .2s ease, transform .06s ease;
     }
-    .detailTop h2{margin:0;font-size:18px}
-    .detailTop .small{color:var(--muted2);font-size:12px;margin-top:3px}
-    .pill{
-      display:inline-flex;gap:8px;align-items:center;
-      padding:7px 10px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.16);
-      color: var(--muted);
-      font-size:12px;
+    .row:hover{background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.14);}
+    .row:active{transform: translateY(1px);}
+    .row.active{
+      background: rgba(140,120,255,.14);
+      border-color: rgba(170,150,255,.28);
+    }
+    .row .left{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .rank{
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      display:grid;
+      place-items:center;
+      font-size: 12px;
+      font-weight: 750;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.10);
+      color: rgba(255,255,255,.82);
+      flex: 0 0 auto;
+    }
+    .name{
+      font-weight: 700;
+      font-size: 13px;
+      overflow:hidden;
+      text-overflow:ellipsis;
       white-space:nowrap;
     }
-
-    .section{padding:12px 14px 14px}
-    .sectionLabel{color:var(--muted);font-size:13px;margin:0 0 10px;font-weight:700}
-
-    .posters{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap:12px;
+    .meta{
+      font-size: 12px;
+      color: rgba(255,255,255,.60);
+      display:flex;
+      gap: 8px;
+      flex-wrap:wrap;
     }
-    @media (max-width: 520px){ .posters{grid-template-columns: repeat(2, minmax(0,1fr));} }
-
-    .posterCard{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      border-radius: 14px;
-      overflow:hidden;
+    .money{
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: .01em;
     }
-    .posterImgWrap{
-      width:100%;
-      aspect-ratio: 2 / 3;
-      background:
-        radial-gradient(120px 120px at 30% 20%, rgba(139,92,246,.25), transparent 70%),
-        radial-gradient(120px 120px at 70% 50%, rgba(34,197,94,.18), transparent 70%),
-        rgba(255,255,255,.04);
-      border-bottom:1px solid rgba(255,255,255,.08);
-      position:relative;
-    }
-    .posterImg{
-      position:absolute;inset:0;
-      width:100%;height:100%;
-      object-fit:cover;
-      display:block;
-    }
-    .posterTitle{
-      padding:8px 10px 10px;
-      font-size:12px;
-      color: var(--muted);
-      line-height:1.25;
-    }
+    .money.pos{color: var(--good);}
+    .money.neg{color: var(--bad);}
 
     .empty{
-      padding:14px;
-      border-radius: 14px;
-      border:1px dashed rgba(255,255,255,.14);
-      color: var(--muted2);
-      background: rgba(0,0,0,.14);
+      color: rgba(255,255,255,.58);
+      font-size: 13px;
+      padding: 14px;
+      border: 1px dashed rgba(255,255,255,.16);
+      border-radius: 16px;
+      background: rgba(0,0,0,.12);
     }
+    .errorbox{
+      color: rgba(255,170,170,.95);
+      font-size: 12px;
+      line-height: 1.35;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,160,160,.22);
+      background: rgba(255,80,80,.08);
+    }
+
+    /* Player detail */
+    .playerTitle{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap: 12px;
+    }
+    .playerTitle .big{
+      font-size: 20px;
+      font-weight: 850;
+      letter-spacing: -0.02em;
+      margin:0;
+    }
+    .smallMeta{
+      color: rgba(255,255,255,.58);
+      font-size: 12px;
+    }
+
+    .section{
+      margin-top: 14px;
+    }
+    .section h3{
+      margin: 0 0 10px;
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.62);
+      display:flex; align-items:center; gap:10px;
+    }
+    .chips{
+      display:flex; gap:8px; flex-wrap:wrap;
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-size: 12px;
+      color: rgba(255,255,255,.78);
+    }
+    .chip strong{color: rgba(255,255,255,.92)}
+    .hr{
+      height:1px;
+      background: rgba(255,255,255,.10);
+      margin: 14px 0;
+    }
+
+    /* Poster grid inside player detail */
+    .posterGrid{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+    .movieTile{
+      width: var(--posterW);
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+    }
+    .poster{
+      width: 100%;
+      aspect-ratio: 2 / 3; /* poster shape */
+      object-fit: cover;
+      border-radius: 16px;
+      box-shadow: var(--shadow2);
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    .movieTitle{
+      font-size: 13px;
+      line-height: 1.2;
+      font-weight: 700;
+      color: rgba(255,255,255,.90);
+    }
+    .profitLine{
+      font-size: 12px;
+      letter-spacing: .2px;
+      color: rgba(255,255,255,.68);
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .profitLine .val{font-weight: 800;}
+    .profitLine .val.pos{color: var(--good);}
+    .profitLine .val.neg{color: var(--bad);}
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      color: rgba(255,255,255,.76);
+    }
+    .badge.bomb{
+      border-color: rgba(255,160,160,.26);
+      background: rgba(255,80,80,.10);
+      color: rgba(255,190,190,.92);
+    }
+    .badge.hit{
+      border-color: rgba(140,255,190,.22);
+      background: rgba(80,255,140,.10);
+      color: rgba(180,255,220,.92);
+    }
+
+    /* Upcoming scroller */
+    .upHead{
+      display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+    }
+    .upSub{
+      color: rgba(255,255,255,.55);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    .scroller{
+      margin-top: 10px;
+      display:flex;
+      gap: 12px;
+      overflow:auto;
+      padding-bottom: 8px;
+      scroll-snap-type: x mandatory;
+    }
+    .scroller::-webkit-scrollbar{height:10px}
+    .scroller::-webkit-scrollbar-thumb{background: rgba(255,255,255,.10); border-radius: 999px}
+    .scroller::-webkit-scrollbar-track{background: rgba(0,0,0,.15); border-radius: 999px}
+
+    .upCard{
+      flex: 0 0 auto;
+      width: 210px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 12px 32px rgba(0,0,0,.32);
+      overflow:hidden;
+      scroll-snap-align: start;
+      position:relative;
+    }
+    .upPoster{
+      width: 100%;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      display:block;
+      background: rgba(255,255,255,.06);
+    }
+    .upInfo{
+      padding: 10px 10px 12px;
+      display:flex;
+      flex-direction:column;
+      gap: 6px;
+    }
+    .upTitle{
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.15;
+    }
+    .upMeta{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 8px;
+      font-size: 12px;
+      color: rgba(255,255,255,.62);
+    }
+    .ownerPill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      max-width: 70%;
+      overflow:hidden;
+      white-space:nowrap;
+      text-overflow:ellipsis;
+    }
+    .avatar{
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display:grid;
+      place-items:center;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.12);
+      font-size: 12px;
+      font-weight: 800;
+      color: rgba(255,255,255,.84);
+      flex: 0 0 auto;
+    }
+
+    .footerNote{
+      margin-top: 10px;
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap:wrap;
+      color: rgba(255,255,255,.40);
+      font-size: 11px;
+    }
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="hero">
-      <div class="kicker">Q1 • SPLIT BOMBS • LIVE STANDINGS</div>
+      <div class="kicker"><span class="dot"></span><span>Q1 • SPLIT BOMBS • LIVE STANDINGS</span></div>
       <h1>Fantasy Box Office League</h1>
-      <p class="sub">Upcoming scroller only shows unreleased movies. Bomb cards show no names.</p>
-
-      <div class="metaRow">
-        <div class="chips">
-          <div class="chip"><span class="dot"></span><span>Live</span></div>
-          <div class="chip" id="updatedChip">Updated: —</div>
-          <div class="chip" id="playerCountChip">0 players</div>
-        </div>
-        <div class="btns">
-          <button id="refreshBtn">↻ Refresh now</button>
-          <button id="clearBtn">✕ Clear selection</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="sectionCard">
-      <div class="sectionHead">
-        <div>
-          <div class="sectionTitle">Upcoming Releases</div>
-          <div class="sectionSub" id="upcomingSub">Loading…</div>
-        </div>
-        <div class="chip" id="upcomingCount">0 movies</div>
-      </div>
-      <div class="scroller" id="upcoming"></div>
-    </div>
-
-    <div class="grid">
-      <div class="panel">
-        <div class="panelHead">
-          <div>
-            <div class="panelTitle">Standings</div>
-            <div class="panelSub">Tap a player to expand</div>
-          </div>
-          <div class="panelTitle" id="standingsCount">0 players</div>
-        </div>
-        <div class="panelBody">
-          <input class="search" id="search" placeholder="Search players…" />
-          <div class="list" id="standings"></div>
-        </div>
+      <div class="sub">
+        Scores update from your Google Sheet. Hits earn their own profit. Bombs are split across opponents (negative exposure).
       </div>
 
-      <div class="panel">
-        <div class="detailTop">
-          <div>
-            <h2 id="detailName">Select a player</h2>
-            <div class="small" id="detailHint">Their roster will appear here.</div>
+      <div class="topbar">
+        <div class="pill"><span class="dot" style="width:7px;height:7px;box-shadow:none;background:rgba(255,255,255,.35)"></span><strong id="liveStatus">Live</strong></div>
+        <div class="pill"><span>Updated:</span> <strong id="updatedAt">—</strong></div>
+        <div class="pill"><span id="playerCount">0 players</span></div>
+        <button class="btn" id="refreshBtn">⟳ Refresh now</button>
+        <button class="btn" id="clearBtn">× Clear selection</button>
+      </div>
+
+      <div id="topError" style="margin-top:12px; display:none;"></div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="head">
+            <div>
+              <h2>Standings</h2>
+              <div class="hint">Tap a player to expand</div>
+            </div>
+            <div class="hint" id="standingsCount">—</div>
           </div>
-          <div class="pill" id="detailTotal">—</div>
-        </div>
-        <div class="section">
-          <div class="empty" id="detailEmpty">Pick someone on the left to view their hits + bomb exposure.</div>
-
-          <div id="detailContent" style="display:none;">
-            <h3 class="sectionLabel">Hits</h3>
-            <div class="posters" id="hits"></div>
-
-            <div style="height:12px"></div>
-
-            <h3 class="sectionLabel">Bomb Exposure (1/6 each)</h3>
-            <div class="posters" id="bombs"></div>
+          <div class="body">
+            <input class="search" id="search" placeholder="Search players..." />
+            <div class="standings" id="standings"></div>
           </div>
         </div>
+
+        <div class="card">
+          <div class="head">
+            <div>
+              <h2 id="detailTitle">Select a player</h2>
+              <div class="hint" id="detailHint">Their roster will appear here.</div>
+            </div>
+          </div>
+          <div class="body" id="detailBody">
+            <div class="empty">Pick someone on the left to view their hits + bomb exposure.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="head">
+          <div class="upHead">
+            <div>
+              <h2>Upcoming Releases</h2>
+              <div class="upSub">Only chosen, unreleased movies (profit = $0). Bombs show as “Bomb” (no names).</div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <div id="upcomingError" style="display:none;"></div>
+          <div class="scroller" id="upcoming"></div>
+        </div>
+      </div>
+
+      <div class="footerNote">
+        <div>Hosted on GitHub Pages · Dark / Cinematic theme</div>
+        <div class="mono">Auto-refresh: every 30s · Cache-bust enabled</div>
       </div>
     </div>
   </div>
 
 <script>
-  // ====== PASTE YOUR URLs HERE ======
-  const API_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8g_VBKkleUsEkvhsj-Gs4Xsk5k9RifmPFUHw8Yq0_K5X8cca9p1or8TBNI5UbfglWT-A6uVSed_tX/pub?gid=784663852&single=true&output=csv";
-  const MOVIES_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8g_VBKkleUsEkvhsj-Gs4Xsk5k9RifmPFUHw8Yq0_K5X8cca9p1or8TBNI5UbfglWT-A6uVSed_tX/pub?gid=29963569&single=true&output=csv";
-  // =================================
+/**
+ * ✅ SET THIS to your published CSV (API tab).
+ * It MUST return comma-separated text with header row that includes "player".
+ */
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8g_VBKkleUsEkvhsj-Gs4Xsk5k9RifmPFUHw8Yq0_K5X8cca9p1or8TBNI5UbfglWT-A6uVSed_tX/pub?output=csv";
 
-  const REFRESH_MS = 30000;
+/**
+ * OPTIONAL: If you later publish a MOVIES CSV (with columns like key/profit/release_date),
+ * you can set MOVIES_CSV_URL and we’ll use it for profit lookups.
+ * If not set / fails, we fall back to totals coming from the API CSV (player totals).
+ */
+// const MOVIES_CSV_URL = "";
 
-  const els = {
-    updatedChip: document.getElementById("updatedChip"),
-    playerCountChip: document.getElementById("playerCountChip"),
-    standingsCount: document.getElementById("standingsCount"),
-    standings: document.getElementById("standings"),
-    search: document.getElementById("search"),
-    refreshBtn: document.getElementById("refreshBtn"),
-    clearBtn: document.getElementById("clearBtn"),
+let STATE = {
+  rows: [],
+  selectedPlayer: null,
+  lastUpdated: null
+};
 
-    detailName: document.getElementById("detailName"),
-    detailHint: document.getElementById("detailHint"),
-    detailTotal: document.getElementById("detailTotal"),
-    detailEmpty: document.getElementById("detailEmpty"),
-    detailContent: document.getElementById("detailContent"),
-    hits: document.getElementById("hits"),
-    bombs: document.getElementById("bombs"),
+function normKey(s){
+  return String(s||"")
+    .replace(/\u00A0/g," ")
+    .trim()
+    .toLowerCase();
+}
 
-    upcoming: document.getElementById("upcoming"),
-    upcomingSub: document.getElementById("upcomingSub"),
-    upcomingCount: document.getElementById("upcomingCount"),
-  };
+function fmtMoney(n){
+  const v = Number(n || 0);
+  const abs = Math.abs(v);
+  const sign = v < 0 ? "−" : "";
+  if (abs >= 1e9) return `${sign}$${(abs/1e9).toFixed(2)}B`;
+  if (abs >= 1e6) return `${sign}$${(abs/1e6).toFixed(1)}M`;
+  if (abs >= 1e3) return `${sign}$${(abs/1e3).toFixed(1)}K`;
+  return `${sign}$${abs.toFixed(0)}`;
+}
 
-  function parseCSV(text){
-    const rows = [];
-    let row = [], cur = "", inQuotes = false;
-    for (let i=0;i<text.length;i++){
-      const c = text[i], n = text[i+1];
-      if (c === '"'){
-        if (inQuotes && n === '"'){ cur += '"'; i++; }
-        else inQuotes = !inQuotes;
-      } else if (c === "," && !inQuotes){
+function moneyClass(v){ return Number(v||0) < 0 ? "neg" : "pos"; }
+
+function safeImg(url){
+  const u = String(url||"").trim();
+  return u || "";
+}
+
+function avatarLetter(name){
+  const n = String(name||"").trim();
+  return n ? n[0].toUpperCase() : "?";
+}
+
+/** Minimal CSV parser that handles quotes */
+function parseCSV(text){
+  // strip BOM
+  text = String(text||"").replace(/^\uFEFF/, "");
+  const rows = [];
+  let row = [];
+  let cur = "";
+  let inQuotes = false;
+
+  for (let i=0; i<text.length; i++){
+    const c = text[i];
+    const next = text[i+1];
+
+    if (inQuotes){
+      if (c === '"' && next === '"'){ cur += '"'; i++; }
+      else if (c === '"'){ inQuotes = false; }
+      else { cur += c; }
+    } else {
+      if (c === '"'){ inQuotes = true; }
+      else if (c === ','){ row.push(cur); cur=""; }
+      else if (c === '\n'){
         row.push(cur); cur="";
-      } else if ((c === "\n" || c === "\r") && !inQuotes){
-        if (c === "\r" && n === "\n") i++;
-        row.push(cur);
-        if (row.length > 1 || row[0] !== "") rows.push(row);
-        row=[]; cur="";
+        // ignore completely empty trailing rows
+        if (row.some(x => String(x).trim() !== "")) rows.push(row);
+        row = [];
+      } else if (c === '\r'){
+        // ignore
       } else {
         cur += c;
       }
     }
-    if (cur.length || row.length){ row.push(cur); rows.push(row); }
-    return rows;
   }
+  row.push(cur);
+  if (row.some(x => String(x).trim() !== "")) rows.push(row);
+  return rows;
+}
 
-  function safeStr(v){ return (v ?? "").toString().trim(); }
-
-  function normKey(s){
-    return safeStr(s)
-      .toLowerCase()
-      .replace(/\u00a0/g, " ")
-      .replace(/['’"]/g, "")
-      .replace(/[:\-—–.,!?()]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
+function showTopError(msg){
+  const box = document.getElementById("topError");
+  if (!msg){
+    box.style.display = "none";
+    box.innerHTML = "";
+    return;
   }
+  box.style.display = "block";
+  box.innerHTML = `<div class="errorbox">${msg}</div>`;
+}
 
-  function fmtMoney(n){
-    const v = Number(n || 0);
-    const sign = v < 0 ? "-" : "";
-    const abs = Math.abs(v);
-    if (abs >= 1e9) return sign + "$" + (abs/1e9).toFixed(2) + "B";
-    if (abs >= 1e6) return sign + "$" + (abs/1e6).toFixed(1) + "M";
-    if (abs >= 1e3) return sign + "$" + (abs/1e3).toFixed(1) + "K";
-    return sign + "$" + abs.toFixed(0);
+function showUpcomingError(msg){
+  const box = document.getElementById("upcomingError");
+  if (!msg){
+    box.style.display = "none";
+    box.innerHTML = "";
+    return;
   }
+  box.style.display = "block";
+  box.innerHTML = `<div class="errorbox">${msg}</div>`;
+}
 
-  function avatarFor(name){
-    const initial = safeStr(name).slice(0,1).toUpperCase() || "?";
-    return { initial };
-  }
+function setUpdated(){
+  const el = document.getElementById("updatedAt");
+  el.textContent = STATE.lastUpdated ? STATE.lastUpdated.toLocaleString() : "—";
+}
 
-  function posterCard(title, url){
-    const t = safeStr(title);
-    const u = safeStr(url);
+async function fetchCSV(url){
+  const u = url + (url.includes("?") ? "&" : "?") + "cb=" + Date.now();
+  const res = await fetch(u, { cache: "no-store" });
+  if (!res.ok) throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
+  return await res.text();
+}
 
-    const card = document.createElement("div");
-    card.className = "posterCard";
+function rowsToObjects(csvText){
+  const rows = parseCSV(csvText);
+  if (!rows.length) return [];
+  const header = rows[0].map(h => normKey(h));
+  const dataRows = rows.slice(1);
 
-    const imgWrap = document.createElement("div");
-    imgWrap.className = "posterImgWrap";
-
-    if (u){
-      const img = document.createElement("img");
-      img.className = "posterImg";
-      img.alt = t;
-      img.loading = "lazy";
-      img.decoding = "async";
-      img.referrerPolicy = "no-referrer";
-      img.src = u;
-      img.onerror = () => { img.remove(); };
-      imgWrap.appendChild(img);
+  const objs = dataRows.map(r => {
+    const o = {};
+    for (let i=0; i<header.length; i++){
+      const k = header[i] || `col_${i}`;
+      o[k] = (r[i] ?? "").toString().trim();
     }
-
-    const label = document.createElement("div");
-    label.className = "posterTitle";
-    label.textContent = t || "—";
-
-    card.appendChild(imgWrap);
-    card.appendChild(label);
-    return card;
-  }
-
-  function upcomingRow(movie){
-    const wrap = document.createElement("div");
-    wrap.className = "movieCard";
-
-    const poster = document.createElement("div");
-    poster.className = "poster";
-    if (movie.posterUrl){
-      const img = document.createElement("img");
-      img.alt = movie.title;
-      img.loading = "lazy";
-      img.decoding = "async";
-      img.referrerPolicy = "no-referrer";
-      img.src = movie.posterUrl;
-      img.onerror = () => { img.remove(); };
-      poster.appendChild(img);
-    }
-
-    const meta = document.createElement("div");
-    meta.className = "movieMeta";
-
-    const top = document.createElement("div");
-    top.className = "movieTop";
-
-    const left = document.createElement("div");
-    const title = document.createElement("div");
-    title.className = "movieTitle";
-    title.textContent = movie.title || "—";
-    left.appendChild(title);
-
-    const date = document.createElement("div");
-    date.className = "movieDate";
-    date.textContent = movie.releaseShort || "—";
-
-    top.appendChild(left);
-    top.appendChild(date);
-
-    const tags = document.createElement("div");
-    tags.className = "tags";
-
-    // Owner tag (ONLY for hits; not for bombs)
-    if (movie.kind === "hit" && movie.owner){
-      const ownerTag = document.createElement("div");
-      ownerTag.className = "tag";
-      const av = document.createElement("span");
-      av.className = "avatar";
-      av.textContent = avatarFor(movie.owner).initial;
-      const ownerText = document.createElement("span");
-      ownerText.textContent = movie.owner;
-      ownerTag.appendChild(av);
-      ownerTag.appendChild(ownerText);
-      tags.appendChild(ownerTag);
-    }
-
-    // Hit/Bomb tag (no names for bombs)
-    const typeTag = document.createElement("div");
-    typeTag.className = "tag " + (movie.kind === "hit" ? "pillHit" : "pillBomb");
-    const dot = document.createElement("span");
-    dot.className = (movie.kind === "hit" ? "dotHit" : "dotBomb");
-    const typeText = document.createElement("span");
-    typeText.textContent = (movie.kind === "hit" ? "Hit" : "Bomb exposure");
-    typeTag.appendChild(dot);
-    typeTag.appendChild(typeText);
-    tags.appendChild(typeTag);
-
-    // Optional profit tag
-    const profitTag = document.createElement("div");
-    profitTag.className = "tag";
-    profitTag.textContent = "Profit: " + fmtMoney(movie.profit || 0);
-    tags.appendChild(profitTag);
-
-    meta.appendChild(top);
-    meta.appendChild(tags);
-
-    wrap.appendChild(poster);
-    wrap.appendChild(meta);
-    return wrap;
-  }
-
-  // ===== Data =====
-  let API = [];
-  let MOVIES = [];
-  let selectedPlayer = null;
-
-  function buildLookupsFromAPI(){
-    const hitOwnerByKey = new Map();
-    const bombKeys = new Set();
-
-    API.forEach(p => {
-      for (let i=1;i<=3;i++){
-        const title = p[`hit${i}`];
-        if (!safeStr(title)) continue;
-        const k = normKey(title);
-        hitOwnerByKey.set(k, p.player);
-      }
-      for (let i=1;i<=6;i++){
-        const title = p[`bomb${i}`];
-        if (!safeStr(title)) continue;
-        bombKeys.add(normKey(title));
-      }
-    });
-
-    return { hitOwnerByKey, bombKeys };
-  }
-
-  function todayISO(){
-    const d = new Date();
-    // local date (not UTC)
-    const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,"0");
-    const day = String(d.getDate()).padStart(2,"0");
-    return `${y}-${m}-${day}`;
-  }
-
-  function renderUpcoming(){
-  const tISO = todayISO();
-
-  // Build a map from movie key -> movie row (poster/release/profit)
-  const movieByKey = new Map();
-  MOVIES.forEach(m => movieByKey.set(normKey(m.key || m.title), m));
-
-  // Collect ONLY movies that were actually chosen (hits + bombs) from the API CSV
-  const chosen = new Map(); // key -> { title, kind, owner }
-
-  API.forEach(p => {
-    // Hits (owner shown)
-    for (let i=1;i<=3;i++){
-      const title = safeStr(p[`hit${i}`]);
-      if (!title) continue;
-      const k = normKey(title);
-      chosen.set(k, { title, kind: "hit", owner: p.player });
-    }
-
-    // Bombs (no owner shown)
-    for (let i=1;i<=6;i++){
-      const title = safeStr(p[`bomb${i}`]);
-      if (!title) continue;
-      const k = normKey(title);
-      // don’t overwrite a hit if somehow the same movie appears in both
-      if (!chosen.has(k)) chosen.set(k, { title, kind: "bomb", owner: "" });
-    }
+    return o;
   });
 
-  // Join chosen movies to MOVIES sheet details + keep ONLY unreleased
-  const upcoming = [];
-  for (const [k, c] of chosen.entries()){
-    const m = movieByKey.get(k);
+  return { header, objs };
+}
 
-    // If it’s not in MOVIES, skip it (keeps the scroller “picks only” and clean)
-    if (!m) continue;
+function validateAPIHeader(header){
+  // Some people accidentally publish the wrong sheet (like DASHBOARD) and it returns weird headers.
+  // We require "player" to be present.
+  return header.includes("player");
+}
 
-    // Only unreleased
-    if (!m.releaseISO || m.releaseISO < tISO) continue;
-
-    upcoming.push({
-      title: m.title || c.title,
-      posterUrl: m.posterUrl,
-      releaseISO: m.releaseISO,
-      releaseShort: m.releaseShort,
-      profit: m.profit || 0,
-      kind: c.kind,
-      owner: c.owner
-    });
+function getPickedMoviesFromRow(r){
+  // Your API CSV columns are like:
+  // hit1, hit1_poster, hit2, hit2_poster, hit3, hit3_poster,
+  // bomb1, bomb1_poster ... bomb6, bomb6_poster
+  const hits = [];
+  const bombs = [];
+  for (let i=1;i<=3;i++){
+    const title = r[`hit${i}`] || "";
+    const poster = r[`hit${i}_poster`] || "";
+    if (String(title).trim() !== ""){
+      hits.push({ title: String(title).trim(), poster: safeImg(poster), kind:"hit", share: 1 });
+    }
   }
+  for (let i=1;i<=6;i++){
+    const title = r[`bomb${i}`] || "";
+    const poster = r[`bomb${i}_poster`] || "";
+    if (String(title).trim() !== ""){
+      // In your sheet bombs are shared (often 1/6). We’ll try to read "share" if present, else assume 1/6.
+      const share = Number(r["share"] || r["bomb_share"] || (1/6));
+      bombs.push({ title: String(title).trim(), poster: safeImg(poster), kind:"bomb", share: isFinite(share) ? share : (1/6) });
+    }
+  }
+  return { hits, bombs };
+}
 
-  upcoming.sort((a,b) => (a.releaseISO||"").localeCompare(b.releaseISO||""));
+function renderStandings(){
+  const standingsEl = document.getElementById("standings");
+  standingsEl.innerHTML = "";
 
-  els.upcoming.innerHTML = "";
-  els.upcomingCount.textContent = `${upcoming.length} movies`;
-  els.upcomingSub.textContent = upcoming.length ? "Scroll → to view upcoming picks" : "No unreleased picks found";
+  const q = normKey(document.getElementById("search").value);
+  const filtered = STATE.rows.filter(r => !q || normKey(r.player).includes(q));
 
-  if (!upcoming.length){
-    els.upcoming.appendChild(Object.assign(document.createElement("div"), {
-      className: "empty",
-      textContent: "No unreleased chosen movies. (Only movies that appear in API picks + have future Release Dates in MOVIES will show.)"
-    }));
+  document.getElementById("standingsCount").textContent = `${filtered.length} players`;
+  document.getElementById("playerCount").textContent = `${STATE.rows.length} players`;
+
+  if (!filtered.length){
+    standingsEl.innerHTML = `<div class="empty">No players found.</div>`;
     return;
   }
 
-  upcoming.forEach(m => els.upcoming.appendChild(upcomingRow(m)));
+  filtered.forEach((r, idx) => {
+    const total = Number(r.total || 0);
+    const { hits, bombs } = getPickedMoviesFromRow(r);
+
+    const row = document.createElement("div");
+    row.className = "row" + (STATE.selectedPlayer === r.player ? " active" : "");
+    row.addEventListener("click", () => {
+      STATE.selectedPlayer = r.player;
+      renderStandings();
+      renderDetail();
+    });
+
+    row.innerHTML = `
+      <div class="left">
+        <div class="rank">${idx+1}</div>
+        <div style="min-width:0">
+          <div class="name">${escapeHtml(r.player || "")}</div>
+          <div class="meta">
+            <span>Hits: <strong>${hits.length}</strong></span>
+            <span>Bombs: <strong>${bombs.length}</strong></span>
+          </div>
+        </div>
+      </div>
+      <div class="money ${moneyClass(total)}">${fmtMoney(total)}</div>
+    `;
+    standingsEl.appendChild(row);
+  });
 }
 
-  function renderStandings(){
-    const q = els.search.value.trim().toLowerCase();
-    const list = API
-      .filter(p => !q || p.player.toLowerCase().includes(q))
-      .sort((a,b)=> Number(b.total||0) - Number(a.total||0));
+function renderDetail(){
+  const body = document.getElementById("detailBody");
+  const title = document.getElementById("detailTitle");
+  const hint = document.getElementById("detailHint");
 
-    els.standings.innerHTML = "";
-    els.standingsCount.textContent = `${list.length} players`;
-    els.playerCountChip.textContent = `${list.length} players`;
+  if (!STATE.selectedPlayer){
+    title.textContent = "Select a player";
+    hint.textContent = "Their roster will appear here.";
+    body.innerHTML = `<div class="empty">Pick someone on the left to view their hits + bomb exposure.</div>`;
+    return;
+  }
 
-    list.forEach((p, idx) => {
-      const btn = document.createElement("button");
-      btn.className = "rowBtn";
-      btn.type = "button";
-      btn.onclick = () => selectPlayer(p.player);
+  const r = STATE.rows.find(x => x.player === STATE.selectedPlayer);
+  if (!r){
+    title.textContent = "Select a player";
+    hint.textContent = "Their roster will appear here.";
+    body.innerHTML = `<div class="empty">Couldn’t find that player in the latest data.</div>`;
+    return;
+  }
 
-      const left = document.createElement("div");
-      left.innerHTML = `<div class="rank">#${idx+1}</div><div class="name">${p.player}</div>`;
+  const total = Number(r.total || 0);
+  const { hits, bombs } = getPickedMoviesFromRow(r);
 
-      const v = Number(p.total||0);
-      const right = document.createElement("div");
-      right.className = "score " + (v < 0 ? "neg" : (v > 0 ? "pos" : ""));
-      right.textContent = fmtMoney(v);
+  title.textContent = r.player;
+  hint.textContent = "Hits (owned) and Bomb Exposure (shared).";
 
-      btn.appendChild(left);
-      btn.appendChild(right);
-      els.standings.appendChild(btn);
+  const hitsHTML = hits.length ? renderPosterGrid(hits, r.player) : `<div class="empty">No hits yet.</div>`;
+  const bombsHTML = bombs.length ? renderPosterGrid(bombs, r.player) : `<div class="empty">No bomb exposure yet.</div>`;
+
+  body.innerHTML = `
+    <div class="playerTitle">
+      <div>
+        <div class="big">${escapeHtml(r.player)}</div>
+        <div class="smallMeta">Total: <span class="money ${moneyClass(total)}">${fmtMoney(total)}</span></div>
+      </div>
+      <div class="chips">
+        <div class="chip"><span>Hits</span> <strong>${hits.length}</strong></div>
+        <div class="chip"><span>Bombs</span> <strong>${bombs.length}</strong></div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="section">
+      <h3>Hits</h3>
+      ${hitsHTML}
+    </div>
+
+    <div class="section">
+      <h3>Bomb Exposure</h3>
+      ${bombsHTML}
+    </div>
+  `;
+}
+
+function renderPosterGrid(items, playerName){
+  const gridId = "g_" + Math.random().toString(16).slice(2);
+  // We’ll render the container now and fill tiles via DOM after innerHTML is set.
+  setTimeout(() => {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+
+    items.forEach(it => {
+      grid.appendChild(movieTile(it, playerName));
     });
-  }
+  }, 0);
 
-  function selectPlayer(name){
-    selectedPlayer = name;
-    const p = API.find(x => x.player === name);
-    if (!p) return;
+  return `<div class="posterGrid" id="${gridId}"></div>`;
+}
 
-    els.detailName.textContent = p.player;
-    els.detailHint.textContent = "Hits + bomb exposure";
-    els.detailTotal.textContent = `Total: ${fmtMoney(p.total || 0)}`;
+/**
+ * Profit display:
+ * - Your API CSV doesn't include per-movie profit, only player totals.
+ * - If you later publish MOVIES and wire it in, you can replace profitForTitle() to map title -> Profit To Date.
+ * For now:
+ *   - We show "$0" for each movie (until you add MOVIES CSV lookup),
+ *   - BUT bombs will still show Exposure: $0 (or the computed number if you wire profit later).
+ */
+function profitForTitle(/*title*/){
+  return 0;
+}
 
-    els.detailEmpty.style.display = "none";
-    els.detailContent.style.display = "block";
-    els.hits.innerHTML = "";
-    els.bombs.innerHTML = "";
+function movieTile({ title, poster, kind="hit", share=1 }, playerName){
+  const profit = profitForTitle(title);             // per-movie profit (optional wiring)
+  const impact = kind === "bomb" ? (profit * Number(share || 0)) : profit;
 
-    for (let i=1;i<=3;i++){
-      if (safeStr(p[`hit${i}`])) els.hits.appendChild(posterCard(p[`hit${i}`], p[`hit${i}_poster`]));
-    }
-    for (let i=1;i<=6;i++){
-      if (safeStr(p[`bomb${i}`])) els.bombs.appendChild(posterCard(p[`bomb${i}`], p[`bomb${i}_poster`]));
-    }
-  }
+  const wrap = document.createElement("div");
+  wrap.className = "movieTile";
 
-  function clearSelection(){
-    selectedPlayer = null;
-    els.detailName.textContent = "Select a player";
-    els.detailHint.textContent = "Their roster will appear here.";
-    els.detailTotal.textContent = "—";
-    els.detailContent.style.display = "none";
-    els.detailEmpty.style.display = "block";
-  }
+  const img = document.createElement("img");
+  img.className = "poster";
+  img.alt = title || "";
+  img.referrerPolicy = "no-referrer"; // helps some hosts
+  if (poster) img.src = poster;
 
-  async function loadAPI(){
-    const url = API_CSV_URL + (API_CSV_URL.includes("?") ? "&" : "?") + "cb=" + Date.now();
-    const r = await fetch(url, { cache: "no-store" });
-    const csv = await r.text();
+  const t = document.createElement("div");
+  t.className = "movieTitle";
+  t.textContent = title || "";
 
-    const rows = parseCSV(csv);
-    const header = (rows[0] || []).map(h => safeStr(h));
-    if ((header[0] || "").toLowerCase() !== "player"){
-      throw new Error(`API CSV header missing "player". Found: ${header.slice(0,6).join(", ")}`);
-    }
+  const line = document.createElement("div");
+  line.className = "profitLine";
 
-    API = rows.slice(1).filter(r => r.some(x => safeStr(x))).map(r => {
-      const o = {};
-      header.forEach((h,i) => o[h] = safeStr(r[i] ?? ""));
-      o.player = o.player || "";
-      o.total = Number(o.total || 0);
-      return o;
+  const badge = document.createElement("span");
+  badge.className = "badge " + (kind === "bomb" ? "bomb" : "hit");
+  badge.textContent = kind === "bomb" ? "Bomb" : "Hit";
+
+  const val = document.createElement("span");
+  val.className = "val " + moneyClass(profit);
+  val.textContent = fmtMoney(profit);
+
+  const sub = document.createElement("span");
+  sub.style.color = "rgba(255,255,255,.55)";
+  sub.textContent = kind === "bomb" ? `Exposure: ${fmtMoney(impact)}` : `Owned: ${fmtMoney(impact)}`;
+
+  // No names next to bomb picks (per your rule)
+  // For hits, we *could* show owner, but you didn't ask for it in the player panel.
+  line.appendChild(badge);
+  line.appendChild(val);
+  line.appendChild(sub);
+
+  wrap.appendChild(img);
+  wrap.appendChild(t);
+  wrap.appendChild(line);
+
+  return wrap;
+}
+
+function buildUpcoming(){
+  const el = document.getElementById("upcoming");
+  el.innerHTML = "";
+
+  // Rules you asked for:
+  // - Only chosen movies (not all MOVIES tab)
+  // - Only unreleased movies in the scroller
+  // - No names next to bomb picks
+  //
+  // We don't have release dates in the API CSV, so we interpret "unreleased" as:
+  // - per-movie profit == 0 (works for your current workflow)
+  //
+  // It also means: when a movie starts earning, it'll naturally drop off.
+
+  const chosen = [];
+  const seen = new Set();
+
+  STATE.rows.forEach(r => {
+    const { hits, bombs } = getPickedMoviesFromRow(r);
+
+    hits.forEach(m => {
+      const k = normKey(m.title);
+      if (!k || seen.has("hit:"+k)) return;
+      seen.add("hit:"+k);
+      chosen.push({
+        ...m,
+        owner: r.player,
+      });
     });
-  }
 
-  function parseDateToISO(s){
-    const v = safeStr(s);
-    if (!v) return "";
-    if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
-
-    const m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-    if (m){
-      const mm = m[1].padStart(2,"0");
-      const dd = m[2].padStart(2,"0");
-      return `${m[3]}-${mm}-${dd}`;
-    }
-    return "";
-  }
-
-  function shortMonthDay(iso){
-    if (!iso) return "";
-    const [y,m,d] = iso.split("-").map(Number);
-    const dt = new Date(Date.UTC(y, (m||1)-1, d||1));
-    return dt.toLocaleString(undefined, { month:"short", day:"numeric" });
-  }
-
-  async function loadMovies(){
-    const url = MOVIES_CSV_URL + (MOVIES_CSV_URL.includes("?") ? "&" : "?") + "cb=" + Date.now();
-    const r = await fetch(url, { cache: "no-store" });
-    const csv = await r.text();
-
-    const rows = parseCSV(csv);
-    const header = (rows[0] || []).map(h => safeStr(h).toLowerCase());
-
-    const idx = (name) => header.indexOf(name);
-
-    const iMovie = idx("movie");
-    const iPoster = idx("poster url");
-    const iRelease = idx("release date");
-    const iProfit = idx("profit to date");
-    const iKey = idx("key");
-
-    if (iMovie === -1){
-      throw new Error(`MOVIES CSV must include a "Movie" column. Found: ${header.slice(0,8).join(", ")}`);
-    }
-
-    MOVIES = rows.slice(1).filter(r => safeStr(r[iMovie])).map(r => {
-      const title = safeStr(r[iMovie]);
-      const posterUrl = iPoster >= 0 ? safeStr(r[iPoster]) : "";
-      const releaseRaw = iRelease >= 0 ? safeStr(r[iRelease]) : "";
-      const releaseISO = parseDateToISO(releaseRaw);
-      const releaseShort = shortMonthDay(releaseISO);
-      const profit = iProfit >= 0 ? Number((r[iProfit] ?? "0").toString().replace(/[$,]/g,"")) || 0 : 0;
-      const key = iKey >= 0 ? safeStr(r[iKey]) : title;
-
-      return { title, posterUrl, releaseISO, releaseShort, profit, key };
+    bombs.forEach(m => {
+      const k = normKey(m.title);
+      if (!k || seen.has("bomb:"+k)) return;
+      seen.add("bomb:"+k);
+      chosen.push({
+        ...m,
+        owner: null, // bombs = no owner shown
+      });
     });
+  });
+
+  // unreleased filter
+  const upcoming = chosen.filter(m => Number(profitForTitle(m.title) || 0) === 0);
+
+  if (!upcoming.length){
+    el.innerHTML = `<div class="empty" style="width:100%;">No upcoming chosen movies right now (profit = $0).</div>`;
+    return;
   }
 
-  async function build(){
-    try{
-      if (API_CSV_URL.includes("PASTE_") || MOVIES_CSV_URL.includes("PASTE_")){
-        throw new Error("Paste your API_CSV_URL and MOVIES_CSV_URL at the top of the script.");
-      }
+  upcoming.forEach(m => el.appendChild(upcomingCard(m)));
+}
 
-      await Promise.all([loadAPI(), loadMovies()]);
+function upcomingCard(m){
+  const card = document.createElement("div");
+  card.className = "upCard";
 
-      els.updatedChip.textContent = "Updated: " + new Date().toLocaleString();
+  const img = document.createElement("img");
+  img.className = "upPoster";
+  img.alt = m.title || "";
+  img.referrerPolicy = "no-referrer";
+  if (m.poster) img.src = m.poster;
 
-      renderUpcoming();
-      renderStandings();
-      if (selectedPlayer) selectPlayer(selectedPlayer);
-    } catch (e){
-      els.updatedChip.textContent = "Updated: —";
-      els.playerCountChip.textContent = "0 players";
-      els.standingsCount.textContent = "0 players";
-      els.upcomingSub.textContent = "Error loading data";
+  const info = document.createElement("div");
+  info.className = "upInfo";
 
-      els.upcoming.innerHTML = `<div class="empty" style="border-color: rgba(239,68,68,.35); color: rgba(255,255,255,.75); min-width: 100%">
-        <div style="color: rgba(239,68,68,.95); font-weight: 700; margin-bottom:6px">Data load error:</div>
-        ${safeStr(e.message)}
-        <div style="margin-top:10px; color: rgba(255,255,255,.5)">Tip: open each CSV URL directly and confirm it shows headers + rows.</div>
-      </div>`;
+  const title = document.createElement("div");
+  title.className = "upTitle";
+  title.textContent = m.title || "";
 
-      els.standings.innerHTML = "";
-      clearSelection();
+  const meta = document.createElement("div");
+  meta.className = "upMeta";
+
+  // left: owner pill OR blank for bombs
+  const left = document.createElement("div");
+  left.className = "ownerPill";
+
+  const badge = document.createElement("span");
+  badge.className = "badge " + (m.kind === "bomb" ? "bomb" : "hit");
+  badge.textContent = m.kind === "bomb" ? "Bomb" : "Hit";
+
+  left.appendChild(badge);
+
+  if (m.kind !== "bomb" && m.owner){
+    const av = document.createElement("span");
+    av.className = "avatar";
+    av.textContent = avatarLetter(m.owner);
+
+    const nm = document.createElement("span");
+    nm.style.overflow = "hidden";
+    nm.style.textOverflow = "ellipsis";
+    nm.style.whiteSpace = "nowrap";
+    nm.textContent = m.owner;
+
+    left.appendChild(av);
+    left.appendChild(nm);
+  }
+
+  const right = document.createElement("div");
+  right.style.opacity = ".8";
+  right.textContent = "Upcoming"; // you asked to remove dates + keep it clean
+
+  meta.appendChild(left);
+  meta.appendChild(right);
+
+  info.appendChild(title);
+  info.appendChild(meta);
+
+  card.appendChild(img);
+  card.appendChild(info);
+
+  return card;
+}
+
+function escapeHtml(s){
+  return String(s||"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+async function build(){
+  try{
+    showTopError(null);
+    showUpcomingError(null);
+
+    const csvText = await fetchCSV(SHEET_CSV_URL);
+    const { header, objs } = rowsToObjects(csvText);
+
+    if (!validateAPIHeader(header)){
+      // show what we found to make it obvious which sheet got published
+      const found = header.slice(0, 10).join(", ");
+      throw new Error(`CSV header missing "player". Found: ${found}`);
     }
+
+    // normalize output object keys expected by code:
+    // header is already normalized, so use those keys.
+    const cleaned = objs.map(o => ({
+      player: o["player"] || "",
+      total: o["total"] || "0",
+      hit1: o["hit1"] || "",
+      hit1_poster: o["hit1_poster"] || "",
+      hit2: o["hit2"] || "",
+      hit2_poster: o["hit2_poster"] || "",
+      hit3: o["hit3"] || "",
+      hit3_poster: o["hit3_poster"] || "",
+      bomb1: o["bomb1"] || "",
+      bomb1_poster: o["bomb1_poster"] || "",
+      bomb2: o["bomb2"] || "",
+      bomb2_poster: o["bomb2_poster"] || "",
+      bomb3: o["bomb3"] || "",
+      bomb3_poster: o["bomb3_poster"] || "",
+      bomb4: o["bomb4"] || "",
+      bomb4_poster: o["bomb4_poster"] || "",
+      bomb5: o["bomb5"] || "",
+      bomb5_poster: o["bomb5_poster"] || "",
+      bomb6: o["bomb6"] || "",
+      bomb6_poster: o["bomb6_poster"] || "",
+      hit_points: o["hit_points"] || "0",
+      bomb_points: o["bomb_points"] || "0",
+      share: o["share"] || o["bomb_share"] || "" // optional
+    }))
+    .filter(r => String(r.player).trim() !== "");
+
+    // sort by total desc
+    cleaned.sort((a,b) => Number(b.total||0) - Number(a.total||0));
+
+    STATE.rows = cleaned;
+    STATE.lastUpdated = new Date();
+
+    setUpdated();
+    renderStandings();
+    renderDetail();
+    buildUpcoming();
+
+    document.getElementById("liveStatus").textContent = "Live";
+  } catch(err){
+    document.getElementById("liveStatus").textContent = "Offline";
+    showTopError(
+      `Data load error:<br><span class="mono">${escapeHtml(err.message || String(err))}</span><br><br>
+       Tip: open your CSV URL directly and confirm it shows comma-separated text with headers + rows.`
+    );
+    // keep UI but show empty
+    STATE.rows = [];
+    STATE.lastUpdated = new Date();
+    setUpdated();
+    renderStandings();
+    renderDetail();
+    document.getElementById("upcoming").innerHTML = `<div class="empty" style="width:100%;">Couldn’t load data. Try Refresh now.</div>`;
   }
+}
 
-  els.search.addEventListener("input", renderStandings);
-  els.refreshBtn.addEventListener("click", build);
-  els.clearBtn.addEventListener("click", clearSelection);
+document.getElementById("refreshBtn").addEventListener("click", build);
+document.getElementById("clearBtn").addEventListener("click", () => {
+  STATE.selectedPlayer = null;
+  renderStandings();
+  renderDetail();
+});
+document.getElementById("search").addEventListener("input", renderStandings);
 
-  clearSelection();
-  build();
-  setInterval(build, REFRESH_MS);
+// run once + auto refresh
+build();
+setInterval(build, 30000);
 </script>
 </body>
 </html>
