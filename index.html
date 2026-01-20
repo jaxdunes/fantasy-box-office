@@ -981,76 +981,41 @@ function escapeHtml(s){
     .replaceAll("'","&#039;");
 }
 
-async function build(){
-  try{
-    showTopError(null);
-    showUpcomingError(null);
+async function build() {
+  const url = SHEET_CSV_URL + (SHEET_CSV_URL.includes("?") ? "&" : "?") + "cb=" + Date.now();
 
-    const csvText = await fetchCSV(SHEET_CSV_URL);
-    const { header, objs } = rowsToObjects(csvText);
+  try {
+    const r = await fetch(url, { cache: "no-store" });
+    const csv = await r.text();
 
-    if (!validateAPIHeader(header)){
-      // show what we found to make it obvious which sheet got published
-      const found = header.slice(0, 10).join(", ");
-      throw new Error(`CSV header missing "player". Found: ${found}`);
+    const rows = parseCSV(csv);
+
+    // Find the real header row (the one containing "player")
+    const headerRowIndex = rows.findIndex(r =>
+      r.some(cell => String(cell).toLowerCase().trim() === "player")
+    );
+
+    if (headerRowIndex === -1) {
+      throw new Error("CSV header row with 'player' not found.");
     }
 
-    // normalize output object keys expected by code:
-    // header is already normalized, so use those keys.
-    const cleaned = objs.map(o => ({
-      player: o["player"] || "",
-      total: o["total"] || "0",
-      hit1: o["hit1"] || "",
-      hit1_poster: o["hit1_poster"] || "",
-      hit2: o["hit2"] || "",
-      hit2_poster: o["hit2_poster"] || "",
-      hit3: o["hit3"] || "",
-      hit3_poster: o["hit3_poster"] || "",
-      bomb1: o["bomb1"] || "",
-      bomb1_poster: o["bomb1_poster"] || "",
-      bomb2: o["bomb2"] || "",
-      bomb2_poster: o["bomb2_poster"] || "",
-      bomb3: o["bomb3"] || "",
-      bomb3_poster: o["bomb3_poster"] || "",
-      bomb4: o["bomb4"] || "",
-      bomb4_poster: o["bomb4_poster"] || "",
-      bomb5: o["bomb5"] || "",
-      bomb5_poster: o["bomb5_poster"] || "",
-      bomb6: o["bomb6"] || "",
-      bomb6_poster: o["bomb6_poster"] || "",
-      hit_points: o["hit_points"] || "0",
-      bomb_points: o["bomb_points"] || "0",
-      share: o["share"] || o["bomb_share"] || "" // optional
-    }))
-    .filter(r => String(r.player).trim() !== "");
+    const header = rows[headerRowIndex].map(h => h.toLowerCase().trim());
+    const data = rows.slice(headerRowIndex + 1).map(r => {
+      const o = {};
+      header.forEach((h, i) => o[h] = (r[i] || "").trim());
+      return o;
+    }).filter(o => o.player);
 
-    // sort by total desc
-    cleaned.sort((a,b) => Number(b.total||0) - Number(a.total||0));
+    renderApp(data);
+    document.getElementById("fbo-updated").textContent =
+      "Updated: " + new Date().toLocaleString();
 
-    STATE.rows = cleaned;
-    STATE.lastUpdated = new Date();
-
-    setUpdated();
-    renderStandings();
-    renderDetail();
-    buildUpcoming();
-
-    document.getElementById("liveStatus").textContent = "Live";
-  } catch(err){
-    document.getElementById("liveStatus").textContent = "Offline";
-    showTopError(
-      `Data load error:<br><span class="mono">${escapeHtml(err.message || String(err))}</span><br><br>
-       Tip: open your CSV URL directly and confirm it shows comma-separated text with headers + rows.`
-    );
-    // keep UI but show empty
-    STATE.rows = [];
-    STATE.lastUpdated = new Date();
-    setUpdated();
-    renderStandings();
-    renderDetail();
-    document.getElementById("upcoming").innerHTML = `<div class="empty" style="width:100%;">Couldn’t load data. Try Refresh now.</div>`;
+  } catch (err) {
+    document.getElementById("fbo-error").textContent = err.message;
+    console.error(err);
   }
 }
+
 
 document.getElementById("refreshBtn").addEventListener("click", build);
 document.getElementById("clearBtn").addEventListener("click", () => {
