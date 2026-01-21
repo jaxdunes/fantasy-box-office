@@ -382,23 +382,31 @@ const MOVIES_CSV_URL =
 
 // robust number parsing: handles "-27,500,000", "$-27,500,000", " -128.3M " (best-effort)
 function num(v){
-  const s = String(v ?? "").trim();
-  if(!s) return 0;
+  const s0 = String(v ?? "").trim();
+  if(!s0) return 0;
 
-  // handle already abbreviated like "128.3M"
-  const m = s.match(/^(-?\$?\s*\d+(\.\d+)?)([KMB])$/i);
+  // Parentheses negatives e.g. (128,300,000)
+  const negParen = /^\((.*)\)$/.test(s0);
+  const s1 = negParen ? s0.replace(/^\(|\)$/g,"") : s0;
+
+  // Support K/M/B suffixes (optional)
+  const m = s1.match(/^(-?\$?\s*\d+(\.\d+)?)(\s*[kmb])$/i);
   if(m){
-    const base = parseFloat(m[1].replace(/\$/g,""));
-    const mult = m[3].toUpperCase()==="K" ? 1e3 : m[3].toUpperCase()==="M" ? 1e6 : 1e9;
-    return (isNaN(base) ? 0 : base*mult);
+    const base = parseFloat(m[1].replace(/\$/g,"").trim());
+    const suf = m[3].trim().toUpperCase();
+    const mult = suf==="K" ? 1e3 : suf==="M" ? 1e6 : 1e9;
+    const out = (isNaN(base) ? 0 : base*mult);
+    return negParen ? -out : out;
   }
 
-  const cleaned = s
+  const cleaned = s1
     .replace(/\$/g,"")
     .replace(/,/g,"")
     .replace(/\s+/g,"");
+
   const n = parseFloat(cleaned);
-  return isNaN(n) ? 0 : n;
+  if (isNaN(n)) return 0;
+  return negParen ? -n : n;
 }
 
 function formatMoney(n){
@@ -454,14 +462,17 @@ function parseCSV(text){
 function toObjects(csvText){
   const rows = parseCSV(csvText);
   if(rows.length < 2) return [];
-  // strip BOM on header cell
-  const header = rows[0].map(h => String(h ?? "").replace(/^\uFEFF/,"").trim());
+
+  // Lowercase header names so we can access columns reliably
+  const header = rows[0].map(h => String(h ?? "").replace(/^\uFEFF/,"").trim().toLowerCase());
+
   return rows.slice(1).map(r => {
     const o = {};
-    header.forEach((h,i)=> o[h] = (r[i] ?? "").trim());
+    header.forEach((h,i)=> o[h] = String(r[i] ?? "").trim());
     return o;
   });
 }
+
 
 function parseDateAny(v){
   // expects something like "1/16/2026" from sheets
@@ -513,63 +524,51 @@ async function loadAll(){
     throw new Error(`CSV header missing "player". Found: ${found || "(none)"}`);
   }
 
-  // MOVIES map (optional but needed for dates + per-title profit)
-  const moviesMap = new Map();
-  if(moviesText){
-    const mRows = toObjects(moviesText);
-    // try common column names you have:
-    // Movie | Poster URL | Release Date | Profit To Date | key
-    for(const r of mRows){
-      const key = normKey(r["key"] || r["Key"] || r["movie_key"] || r["Movie"] || r["movie"] || "");
-      if(!key) continue;
-      moviesMap.set(key, {
-        title: r["Movie"] || r["movie"] || "",
-        poster: r["Poster URL"] || r["Poster"] || r["poster_url"] || "",
-        releaseDate: parseDateAny(r["Release Date"] || r["release_date"] || r["Release"] || ""),
-        profit: num(r["Profit To Date"] || r["Profit"] || r["profit_to_date"] || "")
-      });
+ const moviesMap = new Map();
+
+if(moviesText){
+  const mRows = toObjects(moviesText);
+
+  // Because headers are now lowercase, use lowercase names:
+  // Try common variants:
+  const pickCol = (row, names) => {
+    for (const n of names){
+      if (row[n] !== undefined) return n;
     }
+    return null;
+  };
+
+  // infer columns from the first row
+  const first = mRows[0] || {};
+  const movieCol  = pickCol(first, ["movie","title","film"]);
+  const keyCol    = pickCol(first, ["key","movie_key"]);
+  const profitCol = pickCol(first, ["profit to date","profit_to_date","profit","profit (usd)","profitusd"]);
+  const dateCol   = pickCol(first, ["release date","release_date","releasedate","date"]);
+  const posterCol = pickCol(first, ["poster url","poster_url","poster","posterurl"]);
+
+  // (profit/date/poster can be missing; movie is strongly recommended)
+  for(const r of mRows){
+    const movieTitle = movieCol ? r[movieCol] : "";
+    const keyValue   = keyCol ? r[keyCol] : "";
+
+    const meta = {
+      title: movieTitle,
+      poster: posterCol ? r[posterCol] : "",
+      releaseDate: parseDateAny(dateCol ? r[dateCol] : ""),
+      profit: num(profitCol ? r[profitCol] : 0),
+    };
+
+    // Store under BOTH normalized title and normalized key
+    const tKey = normKey(movieTitle);
+    const kKey = normKey(keyValue);
+
+    if (tKey) moviesMap.set(tKey, meta);
+    if (kKey) moviesMap.set(kKey, meta);
   }
+}
 
-  // normalize players
-  const players = apiRows.map(r => {
-    // allow case-insensitive access
-    const keys = Object.keys(r);
-    const get = (name) => {
-      const k = keys.find(x => x.toLowerCase() === name.toLowerCase());
-      return k ? r[k] : "";
-    };
+state.moviesMap = moviesMap;
 
-    const player = get("player");
-    const total = num(get("total"));
-    const hit_points = num(get("hit_points"));
-    const bomb_points = num(get("bomb_points"));
-
-    const hits = [1,2,3].map(i => ({
-      title: get(`hit${i}`),
-      poster: get(`hit${i}_poster`)
-    })).filter(x => String(x.title).trim() !== "");
-
-    const bombs = [1,2,3,4,5,6].map(i => ({
-      title: get(`bomb${i}`),
-      poster: get(`bomb${i}_poster`)
-    })).filter(x => String(x.title).trim() !== "");
-
-    return {
-      player,
-      total,
-      hit_points,
-      bomb_points,
-      hits,
-      bombs
-    };
-  });
-
-  // sort standings high->low (bigger is better)
-  players.sort((a,b)=> b.total - a.total);
-
-  state.players = players;
-  state.moviesMap = moviesMap;
 
   document.getElementById("updatedText").textContent = new Date().toLocaleString();
   document.getElementById("countText").textContent = String(players.length);
@@ -634,46 +633,30 @@ function normKey(s){
     .replace(/\u00a0/g," ")
     .replace(/[’‘]/g,"'")
     .replace(/[“”]/g,'"')
-    .replace(/[‐-‒–—]/g,"-")
-    .replace(/[：]/g,":")
-    .replace(/\s*:\s*/g,":")
+    .replace(/[‐-‒–—]/g,"-")     // all dash variants -> hyphen
+    .replace(/[：]/g,":")       // fullwidth colon -> colon
+    .replace(/\s*:\s*/g,":")    // normalize colon spacing
     .replace(/\s+/g," ")
-    .replace(/[^a-z0-9: -]/g,"")
+    .replace(/[^a-z0-9: -]/g,"")// strip weird chars but keep numbers/colon/dash/space
     .trim();
 }
 
-function lookupProfit(title){
-  const key = normKey(title);
-  const exact = state.moviesMap.get(key);
-  if (exact) return num(exact.profit);
 
-  for (const [k, v] of state.moviesMap.entries()){
-    if (k.includes(key) || key.includes(k)){
-      return num(v.profit);
-    }
-  }
-  return 0;
+function lookupProfit(title){
+  const m = state.moviesMap.get(normKey(title));
+  return m ? num(m.profit) : 0;
 }
 
 function lookupReleaseDate(title){
-  const key = normKey(title);
-  const exact = state.moviesMap.get(key);
-  if (exact && exact.releaseDate) return exact.releaseDate;
-
-  for (const [k, v] of state.moviesMap.entries()){
-    if (k.includes(key) || key.includes(k)){
-      return v.releaseDate || null;
-    }
-  }
-  return null;
+  const m = state.moviesMap.get(normKey(title));
+  return (m && m.releaseDate) ? m.releaseDate : null;
 }
-
 
 function lookupPosterFallback(title, posterFromApi){
-  const key = normKey(title);
-  const m = state.moviesMap.get(key);
+  const m = state.moviesMap.get(normKey(title));
   return safeImg(posterFromApi || (m && m.poster) || "");
 }
+
 
 function isUnreleased(title){
   // primary: Release Date > today
