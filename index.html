@@ -626,12 +626,20 @@ function renderStandings(){
     list.appendChild(row);
   });
 }
-
-function lookupProfit(title){
-  const key = normKey(title);
-  const m = state.moviesMap.get(key);
-  if(!m) return 0;
-  return num(m.profit);
+  
+function normKey(s){
+  return String(s ?? "")
+    .toLowerCase()
+    .trim()
+    .replace(/\u00a0/g," ")
+    .replace(/[’‘]/g,"'")
+    .replace(/[“”]/g,'"')
+    .replace(/[‐-‒–—]/g,"-")
+    .replace(/[：]/g,":")
+    .replace(/\s*:\s*/g,":")
+    .replace(/\s+/g," ")
+    .replace(/[^a-z0-9: -]/g,"")
+    .trim();
 }
 
 function lookupProfit(title){
@@ -639,13 +647,25 @@ function lookupProfit(title){
   const exact = state.moviesMap.get(key);
   if (exact) return num(exact.profit);
 
-  // fallback: try contains match (helps when one side has a slightly different subtitle)
   for (const [k, v] of state.moviesMap.entries()){
     if (k.includes(key) || key.includes(k)){
       return num(v.profit);
     }
   }
   return 0;
+}
+
+function lookupReleaseDate(title){
+  const key = normKey(title);
+  const exact = state.moviesMap.get(key);
+  if (exact && exact.releaseDate) return exact.releaseDate;
+
+  for (const [k, v] of state.moviesMap.entries()){
+    if (k.includes(key) || key.includes(k)){
+      return v.releaseDate || null;
+    }
+  }
+  return null;
 }
 
 
