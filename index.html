@@ -415,11 +415,13 @@ function normKey(s){
     .toLowerCase()
     .trim()
     .replace(/\u00a0/g," ")
-    .replace(/\s+/g," ")
-    .replace(/[’']/g,"'")
-    .replace(/–|—/g,"-")
-    .replace(/\s*:\s*/g,": ")
-    .replace(/\s+/g," ")
+    .replace(/[’‘]/g,"'")
+    .replace(/[“”]/g,'"')
+    .replace(/[‐-‒–—]/g,"-")     // all dash variants -> hyphen
+    .replace(/[：]/g,":")       // fullwidth colon -> colon
+    .replace(/\s*:\s*/g,":")    // normalize spacing around colon
+    .replace(/\s+/g," ")        // collapse spaces
+    .replace(/[^a-z0-9: -]/g,"")// strip weird chars but keep numbers/colon/dash/space
     .trim();
 }
 
@@ -632,11 +634,20 @@ function lookupProfit(title){
   return num(m.profit);
 }
 
-function lookupReleaseDate(title){
+function lookupProfit(title){
   const key = normKey(title);
-  const m = state.moviesMap.get(key);
-  return m ? m.releaseDate : null;
+  const exact = state.moviesMap.get(key);
+  if (exact) return num(exact.profit);
+
+  // fallback: try contains match (helps when one side has a slightly different subtitle)
+  for (const [k, v] of state.moviesMap.entries()){
+    if (k.includes(key) || key.includes(k)){
+      return num(v.profit);
+    }
+  }
+  return 0;
 }
+
 
 function lookupPosterFallback(title, posterFromApi){
   const key = normKey(title);
