@@ -352,7 +352,7 @@
       <div class="upcomingHead">
         <div>
           <h2>Upcoming Releases</h2>
-          <p class="hint">Only chosen, unreleased movies. Bombs show as “Bomb”.</p>
+          <p class="hint">Only chosen, unreleased movies. Bombs show as "Bomb".</p>
         </div>
       </div>
       <div class="rail" id="upcomingRail"></div>
@@ -368,28 +368,22 @@
  * REQUIRED:
  * 1) Publish your API tab as CSV (this is your roster export)
  * 2) Publish your MOVIES tab as CSV (for release dates + profits by title)
- *
- * You already have the API CSV. You must set MOVIES_CSV_URL to your published MOVIES CSV.
  */
 const API_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8g_VBKkleUsEkvhsj-Gs4Xsk5k9RifmPFUHw8Yq0_K5X8cca9p1or8TBNI5UbfglWT-A6uVSed_tX/pub?gid=784663852&single=true&output=csv";
 
-// TODO: replace with your MOVIES published CSV URL (must include columns for Movie, Poster URL, Release Date, Profit To Date, key)
 const MOVIES_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8g_VBKkleUsEkvhsj-Gs4Xsk5k9RifmPFUHw8Yq0_K5X8cca9p1or8TBNI5UbfglWT-A6uVSed_tX/pub?gid=29963569&single=true&output=csv";
 
 /* ------------------ helpers ------------------ */
 
-// robust number parsing: handles "-27,500,000", "$-27,500,000", " -128.3M " (best-effort)
 function num(v){
   const s0 = String(v ?? "").trim();
   if(!s0) return 0;
 
-  // Parentheses negatives e.g. (128,300,000)
   const negParen = /^\((.*)\)$/.test(s0);
   const s1 = negParen ? s0.replace(/^\(|\)$/g,"") : s0;
 
-  // Support K/M/B suffixes (optional)
   const m = s1.match(/^(-?\$?\s*\d+(\.\d+)?)(\s*[kmb])$/i);
   if(m){
     const base = parseFloat(m[1].replace(/\$/g,"").trim());
@@ -423,18 +417,17 @@ function normKey(s){
     .toLowerCase()
     .trim()
     .replace(/\u00a0/g," ")
-    .replace(/[’‘]/g,"'")
-    .replace(/[“”]/g,'"')
-    .replace(/[‐-‒–—]/g,"-")     // all dash variants -> hyphen
-    .replace(/[：]/g,":")       // fullwidth colon -> colon
-    .replace(/\s*:\s*/g,":")    // normalize spacing around colon
-    .replace(/\s+/g," ")        // collapse spaces
-    .replace(/[^a-z0-9: -]/g,"")// strip weird chars but keep numbers/colon/dash/space
+    .replace(/['']/g,"'")
+    .replace(/[""]/g,'"')
+    .replace(/[‐-‒–—]/g,"-")
+    .replace(/[：]/g,":")
+    .replace(/\s*:\s*/g,":")
+    .replace(/\s+/g," ")
+    .replace(/[^a-z0-9: -]/g,"")
     .trim();
 }
 
 function parseCSV(text){
-  // handles simple CSV with quoted fields
   const rows = [];
   let cur = [], field = "", inQuotes = false;
   for(let i=0;i<text.length;i++){
@@ -447,7 +440,6 @@ function parseCSV(text){
     } else if((c === "\n" || c === "\r") && !inQuotes){
       if(c === "\r" && text[i+1] === "\n") i++;
       cur.push(field); field="";
-      // ignore empty trailing lines
       if(cur.some(x => String(x).trim() !== "")) rows.push(cur);
       cur = [];
     } else {
@@ -463,7 +455,6 @@ function toObjects(csvText){
   const rows = parseCSV(csvText);
   if(rows.length < 2) return [];
 
-  // Lowercase header names so we can access columns reliably
   const header = rows[0].map(h => String(h ?? "").replace(/^\uFEFF/,"").trim().toLowerCase());
 
   return rows.slice(1).map(r => {
@@ -473,9 +464,7 @@ function toObjects(csvText){
   });
 }
 
-
 function parseDateAny(v){
-  // expects something like "1/16/2026" from sheets
   const s = String(v ?? "").trim();
   if(!s) return null;
   const d = new Date(s);
@@ -496,7 +485,7 @@ function safeImg(url){
 
 let state = {
   players: [],
-  moviesMap: new Map(), // key -> { title, poster, releaseDate, profit }
+  moviesMap: new Map(),
   selected: null
 };
 
@@ -518,59 +507,123 @@ async function loadAll(){
 
   const apiRows = toObjects(apiText);
 
-  // validate API headers
   if(!apiRows.length || !Object.keys(apiRows[0]).some(h => h.toLowerCase() === "player")){
     const found = Object.keys(apiRows[0] || {}).join(", ");
     throw new Error(`CSV header missing "player". Found: ${found || "(none)"}`);
   }
 
- const moviesMap = new Map();
+  const moviesMap = new Map();
 
-if(moviesText){
-  const mRows = toObjects(moviesText);
+  if(moviesText){
+    const mRows = toObjects(moviesText);
 
-  // Because headers are now lowercase, use lowercase names:
-  // Try common variants:
-  const pickCol = (row, names) => {
-    for (const n of names){
-      if (row[n] !== undefined) return n;
-    }
-    return null;
-  };
-
-  // infer columns from the first row
-  const first = mRows[0] || {};
-  const movieCol  = pickCol(first, ["movie","title","film"]);
-  const keyCol    = pickCol(first, ["key","movie_key"]);
-  const profitCol = pickCol(first, ["profit to date","profit_to_date","profit","profit (usd)","profitusd"]);
-  const dateCol   = pickCol(first, ["release date","release_date","releasedate","date"]);
-  const posterCol = pickCol(first, ["poster url","poster_url","poster","posterurl"]);
-
-  // (profit/date/poster can be missing; movie is strongly recommended)
-  for(const r of mRows){
-    const movieTitle = movieCol ? r[movieCol] : "";
-    const keyValue   = keyCol ? r[keyCol] : "";
-
-    const meta = {
-      title: movieTitle,
-      poster: posterCol ? r[posterCol] : "",
-      releaseDate: parseDateAny(dateCol ? r[dateCol] : ""),
-      profit: num(profitCol ? r[profitCol] : 0),
+    const pickCol = (row, names) => {
+      for (const n of names){
+        if (row[n] !== undefined) return n;
+      }
+      return null;
     };
 
-    // Store under BOTH normalized title and normalized key
-    const tKey = normKey(movieTitle);
-    const kKey = normKey(keyValue);
+    const first = mRows[0] || {};
+    const movieCol  = pickCol(first, ["movie","title","film"]);
+    const keyCol    = pickCol(first, ["key","movie_key"]);
+    const profitCol = pickCol(first, ["profit to date","profit_to_date","profit","profit (usd)","profitusd"]);
+    const dateCol   = pickCol(first, ["release date","release_date","releasedate","date"]);
+    const posterCol = pickCol(first, ["poster url","poster_url","poster","posterurl"]);
 
-    if (tKey) moviesMap.set(tKey, meta);
-    if (kKey) moviesMap.set(kKey, meta);
+    for(const r of mRows){
+      const movieTitle = movieCol ? r[movieCol] : "";
+      const keyValue   = keyCol ? r[keyCol] : "";
+
+      const meta = {
+        title: movieTitle,
+        poster: posterCol ? r[posterCol] : "",
+        releaseDate: parseDateAny(dateCol ? r[dateCol] : ""),
+        profit: num(profitCol ? r[profitCol] : 0),
+      };
+
+      const tKey = normKey(movieTitle);
+      const kKey = normKey(keyValue);
+
+      if (tKey) moviesMap.set(tKey, meta);
+      if (kKey) moviesMap.set(kKey, meta);
+    }
   }
-}
 
-state.moviesMap = moviesMap;
-state.players = players;
+  state.moviesMap = moviesMap;
 
+  // PROCESS API ROWS INTO PLAYERS
+  const players = [];
+  
+  for(const row of apiRows){
+    const playerName = row.player || "";
+    if(!playerName) continue;
 
+    const hits = [];
+    const bombs = [];
+
+    // Process hits (hit1, hit2, hit3, etc.)
+    for(let i = 1; i <= 20; i++){
+      const hitKey = `hit${i}`;
+      const posterKey = `hit${i}_poster`;
+      const title = row[hitKey];
+      
+      if(title && title.trim()){
+        hits.push({
+          title: title.trim(),
+          poster: row[posterKey] || ""
+        });
+      }
+    }
+
+    // Process bombs (bomb1, bomb2, bomb3, etc.)
+    for(let i = 1; i <= 20; i++){
+      const bombKey = `bomb${i}`;
+      const posterKey = `bomb${i}_poster`;
+      const title = row[bombKey];
+      
+      if(title && title.trim()){
+        bombs.push({
+          title: title.trim(),
+          poster: row[posterKey] || ""
+        });
+      }
+    }
+
+    // Calculate totals
+    const hitTotal = hits.reduce((sum, h) => sum + lookupProfit(h.title), 0);
+    const bombTotal = bombs.reduce((sum, b) => sum + lookupProfit(b.title), 0);
+    
+    players.push({
+      player: playerName,
+      hits,
+      bombs,
+      hitTotal,
+      bombTotal,
+      total: 0
+    });
+  }
+
+  // Calculate bomb splits and final totals
+  const numPlayers = players.length;
+  
+  for(const p of players){
+    let finalTotal = p.hitTotal;
+    
+    // Add this player's share of OTHER players' bombs
+    for(const other of players){
+      if(other.player === p.player) continue;
+      
+      const share = other.bombTotal / Math.max(1, numPlayers - 1);
+      finalTotal += share;
+    }
+    
+    p.total = finalTotal;
+  }
+
+  players.sort((a, b) => b.total - a.total);
+
+  state.players = players;
 
   document.getElementById("updatedText").textContent = new Date().toLocaleString();
   document.getElementById("countText").textContent = String(players.length);
@@ -579,7 +632,7 @@ state.players = players;
 
   renderStandings();
   renderUpcoming();
-  // keep selection if possible
+  
   if(state.selected){
     const still = players.find(p => p.player === state.selected.player);
     state.selected = still || null;
@@ -627,22 +680,6 @@ function renderStandings(){
     list.appendChild(row);
   });
 }
-  
-function normKey(s){
-  return String(s ?? "")
-    .toLowerCase()
-    .trim()
-    .replace(/\u00a0/g," ")
-    .replace(/[’‘]/g,"'")
-    .replace(/[“”]/g,'"')
-    .replace(/[‐-‒–—]/g,"-")     // all dash variants -> hyphen
-    .replace(/[：]/g,":")       // fullwidth colon -> colon
-    .replace(/\s*:\s*/g,":")    // normalize colon spacing
-    .replace(/\s+/g," ")
-    .replace(/[^a-z0-9: -]/g,"")// strip weird chars but keep numbers/colon/dash/space
-    .trim();
-}
-
 
 function lookupProfit(title){
   const m = state.moviesMap.get(normKey(title));
@@ -659,14 +696,11 @@ function lookupPosterFallback(title, posterFromApi){
   return safeImg(posterFromApi || (m && m.poster) || "");
 }
 
-
 function isUnreleased(title){
-  // primary: Release Date > today
   const rd = lookupReleaseDate(title);
   const now = new Date();
   if(rd) return rd.getTime() > new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
 
-  // fallback: if no release date available, treat profit==0 as unreleased
   return lookupProfit(title) === 0;
 }
 
@@ -690,7 +724,6 @@ function renderDetail(){
   body.className = "";
   body.innerHTML = "";
 
-  // Summary card
   const summary = document.createElement("div");
   summary.className = "panel";
   summary.style.padding = "14px";
@@ -706,7 +739,6 @@ function renderDetail(){
   `;
   body.appendChild(summary);
 
-  // Hits
   const hitsTitle = document.createElement("div");
   hitsTitle.className = "sectionTitle";
   hitsTitle.textContent = "HITS";
@@ -729,7 +761,6 @@ function renderDetail(){
   });
   body.appendChild(hitsWrap);
 
-  // Bombs
   const bombTitle = document.createElement("div");
   bombTitle.className = "sectionTitle";
   bombTitle.textContent = "BOMB EXPOSURE (SPLIT)";
@@ -738,7 +769,7 @@ function renderDetail(){
   const bombsWrap = document.createElement("div");
   bombsWrap.className = "cards";
   p.bombs.forEach(b => {
-    const profit = lookupProfit(b.title); // this will be negative/positive based on movie profit-to-date
+    const profit = lookupProfit(b.title);
     const poster = lookupPosterFallback(b.title, b.poster);
     bombsWrap.appendChild(movieCard({
       type:"Bomb",
@@ -801,11 +832,9 @@ function renderUpcoming(){
   const rail = document.getElementById("upcomingRail");
   rail.innerHTML = "";
 
-  // If MOVIES_CSV_URL isn't set, we can't do dates properly
   const hasMovies = state.moviesMap && state.moviesMap.size > 0;
 
-  // gather all chosen movies from API (hits + bombs), de-dupe by normalized key
-  const picked = new Map(); // key -> {title, poster, kind, ownerLabel}
+  const picked = new Map();
   for(const p of state.players){
     for(const h of p.hits){
       const key = normKey(h.title);
@@ -823,22 +852,18 @@ function renderUpcoming(){
           title: b.title,
           poster: lookupPosterFallback(b.title, b.poster),
           kind: "Bomb",
-          ownerLabel: "Bomb" // no names for bombs
+          ownerLabel: "Bomb"
         });
-      } else {
-        // If already a Hit somewhere, keep as Hit (owner label)
       }
     }
   }
 
-  // filter unreleased
   const items = Array.from(picked.values())
     .filter(it => isUnreleased(it.title))
     .map(it => {
       const rd = lookupReleaseDate(it.title);
       return { ...it, releaseDate: rd };
     })
-    // sort by date if available, else bottom
     .sort((a,b)=>{
       const ta = a.releaseDate ? a.releaseDate.getTime() : 9e15;
       const tb = b.releaseDate ? b.releaseDate.getTime() : 9e15;
@@ -925,7 +950,6 @@ function showError(err){
   box.style.background = "rgba(255,77,109,.10)";
   box.style.color = "rgba(255,220,228,.95)";
   box.innerHTML = `<b>Data load error:</b><br>${String(err.message || err)}<br><br><span style="color:rgba(238,240,255,.65)">Tip: open your CSV URL directly and confirm it shows comma-separated text with headers + rows.</span>`;
-  // remove previous error boxes
   hero.querySelectorAll(".errbox").forEach(n=>n.remove());
   box.className = "errbox";
   hero.appendChild(box);
