@@ -670,8 +670,23 @@ function renderStandings(){
 
   const q = document.getElementById("search").value.trim().toLowerCase();
 
+  let currentRank = 1;
+  let previousTotal = null;
+  let playersAtCurrentRank = 0;
+
   state.players.forEach((p, idx) => {
     if(q && !p.player.toLowerCase().includes(q)) return;
+
+    // Check if this player's total is different from the previous
+    if(previousTotal !== null && Math.abs(p.total - previousTotal) > 0.01){
+      // Different total, so increment rank by the number of players at the previous rank
+      currentRank += playersAtCurrentRank;
+      playersAtCurrentRank = 1;
+    } else {
+      // Same total (tie) or first player
+      playersAtCurrentRank++;
+    }
+    previousTotal = p.total;
 
     const row = document.createElement("div");
     row.className = "row" + (state.selected && state.selected.player === p.player ? " active" : "");
@@ -682,7 +697,7 @@ function renderStandings(){
 
     const name = document.createElement("div");
     name.className = "name";
-    name.textContent = `#${idx+1} ${p.player}`;
+    name.textContent = `#${currentRank} ${p.player}`;
 
     const mini = document.createElement("div");
     mini.className = "mini";
