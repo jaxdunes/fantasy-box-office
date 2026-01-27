@@ -791,16 +791,25 @@ function renderDetail(){
     const bombWrap = document.createElement("div");
     bombWrap.className = "cards";
     p.assignedBombs.forEach(b => {
-      const profit = lookupProfit(b.title);
+      const totalProfit = lookupProfit(b.title);
+      const key = normKey(b.title);
+      
+      // Find how many players this bomb is assigned to
+      const assignedTo = state.players.filter(player => 
+        player.assignedBombs.some(bomb => normKey(bomb.title) === key)
+      );
+      const numAssigned = assignedTo.length;
+      const myShare = numAssigned > 0 ? totalProfit / numAssigned : totalProfit;
+      
       const poster = lookupPosterFallback(b.title, b.poster);
-      bombWrap.appendChild(movieCard({
-        type:"Bomb",
+      bombWrap.appendChild(movieCardWithShare({
         badgeText:"Bomb",
         badgeClass:"bomb",
         title: b.title,
         poster,
-        profit,
-        label:"My Share"
+        totalProfit,
+        myShare,
+        numAssigned
       }));
     });
     body.appendChild(bombWrap);
@@ -838,6 +847,64 @@ function movieCard({badgeText, badgeClass, title, poster, profit, label}){
   const right = document.createElement("div");
   right.className = "delta " + (profit >= 0 ? "good" : "bad");
   right.textContent = formatMoney(profit);
+
+  sub.appendChild(left);
+  sub.appendChild(right);
+
+  body.appendChild(t);
+  body.appendChild(sub);
+
+  c.appendChild(img);
+  c.appendChild(badge);
+  c.appendChild(body);
+  return c;
+}
+
+function movieCardWithShare({badgeText, badgeClass, title, poster, totalProfit, myShare, numAssigned}){
+  const c = document.createElement("div");
+  c.className = "card";
+  const img = document.createElement("img");
+  img.className = "poster";
+  img.alt = title;
+  img.loading = "lazy";
+  img.referrerPolicy = "no-referrer";
+  img.src = poster || "";
+  img.onerror = () => { img.style.display="none"; };
+
+  const badge = document.createElement("div");
+  badge.className = "badge " + badgeClass;
+  badge.textContent = badgeText;
+
+  const body = document.createElement("div");
+  body.className = "cardBody";
+
+  const t = document.createElement("div");
+  t.className = "title";
+  t.textContent = title;
+
+  const sub = document.createElement("div");
+  sub.className = "subrow";
+
+  const left = document.createElement("div");
+  left.textContent = "My Share";
+
+  const right = document.createElement("div");
+  right.className = "delta " + (myShare >= 0 ? "good" : "bad");
+  right.style.display = "flex";
+  right.style.flexDirection = "column";
+  right.style.alignItems = "flex-end";
+  right.style.gap = "2px";
+  
+  const total = document.createElement("div");
+  total.style.fontSize = "10px";
+  total.style.opacity = "0.7";
+  total.textContent = `${formatMoney(totalProfit)} ÷ ${numAssigned}`;
+  
+  const share = document.createElement("div");
+  share.textContent = formatMoney(myShare);
+  
+  right.appendChild(total);
+  right.appendChild(share);
 
   sub.appendChild(left);
   sub.appendChild(right);
