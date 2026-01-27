@@ -578,44 +578,62 @@ async function loadAll(){
       }
     }
 
-    // Process the ONE bomb this player picked (stored in bomb1)
-    const myBombTitle = row['bomb1'];
-    const myBombPoster = row['bomb1_poster'] || "";
-    const myBomb = myBombTitle && myBombTitle.trim() ? {
-      title: myBombTitle.trim(),
-      poster: myBombPoster
-    } : null;
+    // Process bombs ASSIGNED TO this player (bomb1, bomb2, bomb3, etc.)
+    const assignedBombs = [];
+    for(let i = 1; i <= 20; i++){
+      const bombKey = `bomb${i}`;
+      const posterKey = `bomb${i}_poster`;
+      const title = row[bombKey];
+      
+      if(title && title.trim()){
+        assignedBombs.push({
+          title: title.trim(),
+          poster: row[posterKey] || ""
+        });
+      }
+    }
 
     // Calculate hit total (all profits/losses from hits)
     const hitTotal = hits.reduce((sum, h) => sum + lookupProfit(h.title), 0);
     
-    // My bomb's profit (will be split to OTHER players)
-    const myBombProfit = myBomb ? lookupProfit(myBomb.title) : 0;
-    
     players.push({
       player: playerName,
       hits,
-      myBomb,
-      myBombProfit,
+      assignedBombs,
       hitTotal,
       total: 0
     });
   }
 
-  // Calculate final totals with bomb splits
+  // Now calculate each player's bomb exposure
+  // Each bomb's loss is split among all players who have it assigned to them
   const numPlayers = players.length;
   
+  // Build a map of bomb -> players who have it assigned
+  const bombAssignments = new Map();
   for(const p of players){
-    // Start with all hit profits/losses
+    for(const bomb of p.assignedBombs){
+      const key = normKey(bomb.title);
+      if(!bombAssignments.has(key)){
+        bombAssignments.set(key, []);
+      }
+      bombAssignments.get(key).push(p.player);
+    }
+  }
+
+  // Calculate final totals
+  for(const p of players){
     let finalTotal = p.hitTotal;
     
-    // Add this player's share of ALL OTHER players' bombs (not their own)
-    for(const other of players){
-      if(other.player === p.player) continue; // Don't receive your own bomb
+    // Add this player's share of each bomb assigned to them
+    for(const bomb of p.assignedBombs){
+      const key = normKey(bomb.title);
+      const profit = lookupProfit(bomb.title);
+      const assignedTo = bombAssignments.get(key) || [];
       
-      // This player gets 1/(numPlayers-1) share of the other player's bomb
-      if(other.myBombProfit !== 0){
-        const share = other.myBombProfit / Math.max(1, numPlayers - 1);
+      // Split the bomb's profit/loss among all players it was assigned to
+      if(assignedTo.length > 0){
+        const share = profit / assignedTo.length;
         finalTotal += share;
       }
     }
@@ -668,7 +686,7 @@ function renderStandings(){
 
     const mini = document.createElement("div");
     mini.className = "mini";
-    mini.textContent = `Hits: ${p.hits.length} • Bomb: ${p.myBomb ? p.myBomb.title : 'None'}`;
+    mini.textContent = `Hits: ${p.hits.length} • Bombs assigned: ${p.assignedBombs.length}`;
 
     meta.appendChild(name);
     meta.appendChild(mini);
@@ -734,7 +752,7 @@ function renderDetail(){
     <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
       <div>
         <div style="font-weight:900;font-size:16px">${p.player}</div>
-        <div style="color:var(--muted);font-size:13px;margin-top:2px">Hits: ${p.hits.length} • Bomb pick: ${p.myBomb ? p.myBomb.title : 'None'}</div>
+        <div style="color:var(--muted);font-size:13px;margin-top:2px">Hits: ${p.hits.length} • Bombs assigned: ${p.assignedBombs.length}</div>
       </div>
       <div style="font-weight:900;font-size:18px;color:${p.total>=0?'var(--good)':'var(--bad)'}">${formatMoney(p.total)}</div>
     </div>
@@ -763,26 +781,28 @@ function renderDetail(){
   });
   body.appendChild(hitsWrap);
 
-  // Show this player's bomb pick
-  if(p.myBomb){
+  // Show bombs assigned to this player
+  if(p.assignedBombs.length > 0){
     const bombTitle = document.createElement("div");
     bombTitle.className = "sectionTitle";
-    bombTitle.textContent = "MY BOMB PICK (SPLIT TO OTHERS)";
+    bombTitle.textContent = "BOMBS ASSIGNED TO ME (SPLIT)";
     body.appendChild(bombTitle);
 
     const bombWrap = document.createElement("div");
     bombWrap.className = "cards";
-    const profit = lookupProfit(p.myBomb.title);
-    const poster = lookupPosterFallback(p.myBomb.title, p.myBomb.poster);
-    bombWrap.appendChild(movieCard({
-      type:"Bomb",
-      badgeText:"My Bomb",
-      badgeClass:"bomb",
-      title: p.myBomb.title,
-      poster,
-      profit,
-      label:"Total Loss"
-    }));
+    p.assignedBombs.forEach(b => {
+      const profit = lookupProfit(b.title);
+      const poster = lookupPosterFallback(b.title, b.poster);
+      bombWrap.appendChild(movieCard({
+        type:"Bomb",
+        badgeText:"Bomb",
+        badgeClass:"bomb",
+        title: b.title,
+        poster,
+        profit,
+        label:"My Share"
+      }));
+    });
     body.appendChild(bombWrap);
   }
 }
@@ -849,15 +869,15 @@ function renderUpcoming(){
         ownerLabel: p.player
       });
     }
-    // Add this player's bomb pick
-    if(p.myBomb){
-      const key = normKey(p.myBomb.title);
+    // Add assigned bombs
+    for(const b of p.assignedBombs){
+      const key = normKey(b.title);
       if(!picked.has(key)){
         picked.set(key, {
-          title: p.myBomb.title,
-          poster: lookupPosterFallback(p.myBomb.title, p.myBomb.poster),
+          title: b.title,
+          poster: lookupPosterFallback(b.title, b.poster),
           kind: "Bomb",
-          ownerLabel: p.player + "'s Bomb"
+          ownerLabel: "Bomb"
         });
       }
     }
