@@ -303,6 +303,56 @@
       font-size:12px;
     }
     a{color:inherit}
+
+    /* LOSER badge for last place */
+    .loser-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 10px;
+      padding: 4px 10px;
+      background: linear-gradient(135deg, #ff4d6d, #ff1744);
+      border: 2px solid #ff8a9b;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 15px rgba(255,77,109,0.4);
+      animation: loserShake 0.5s ease-in-out infinite, loserPulse 2s ease-in-out infinite;
+      transform-origin: center;
+    }
+
+    .loser-badge::before {
+      content: "🤡";
+      font-size: 14px;
+    }
+
+    .loser-badge::after {
+      content: "📉";
+      font-size: 12px;
+    }
+
+    @keyframes loserShake {
+      0%, 100% { transform: rotate(-3deg); }
+      50% { transform: rotate(3deg); }
+    }
+
+    @keyframes loserPulse {
+      0%, 100% { box-shadow: 0 4px 15px rgba(255,77,109,0.4); }
+      50% { box-shadow: 0 4px 25px rgba(255,77,109,0.7), 0 0 30px rgba(255,77,109,0.3); }
+    }
+
+    /* Last place row styling */
+    .row.last-place {
+      background: rgba(255,77,109,0.15);
+      border-color: rgba(255,77,109,0.3);
+    }
+
+    .row.last-place:hover {
+      background: rgba(255,77,109,0.22);
+    }
   </style>
 </head>
 <body>
@@ -707,26 +757,36 @@ function renderStandings(){
 
   const q = document.getElementById("search").value.trim().toLowerCase();
 
+  // Filter players first to know who's actually last in filtered results
+  const filteredPlayers = state.players.filter(p => 
+    !q || p.player.toLowerCase().includes(q)
+  );
+  
+  const lastPlaceIndex = filteredPlayers.length - 1;
+
   let currentRank = 1;
   let previousTotal = null;
   let playersAtCurrentRank = 0;
+  let displayIndex = 0;
 
   state.players.forEach((p, idx) => {
     if(q && !p.player.toLowerCase().includes(q)) return;
 
+    const isLastPlace = displayIndex === lastPlaceIndex && filteredPlayers.length > 1;
+
     // Check if this player's total is different from the previous
     if(previousTotal !== null && Math.abs(p.total - previousTotal) > 0.01){
-      // Different total, so increment rank by the number of players at the previous rank
       currentRank += playersAtCurrentRank;
       playersAtCurrentRank = 1;
     } else {
-      // Same total (tie) or first player
       playersAtCurrentRank++;
     }
     previousTotal = p.total;
 
     const row = document.createElement("div");
-    row.className = "row" + (state.selected && state.selected.player === p.player ? " active" : "");
+    row.className = "row" + 
+      (state.selected && state.selected.player === p.player ? " active" : "") +
+      (isLastPlace ? " last-place" : "");
     row.onclick = () => { state.selected = p; renderStandings(); renderDetail(); };
 
     const meta = document.createElement("div");
@@ -734,7 +794,15 @@ function renderStandings(){
 
     const name = document.createElement("div");
     name.className = "name";
-    name.textContent = `#${currentRank} ${p.player}`;
+    name.innerHTML = `#${currentRank} ${p.player}`;
+    
+    // Add LOSER badge for last place
+    if (isLastPlace) {
+      const loserBadge = document.createElement("span");
+      loserBadge.className = "loser-badge";
+      loserBadge.textContent = "LOSER!";
+      name.appendChild(loserBadge);
+    }
 
     const mini = document.createElement("div");
     mini.className = "mini";
@@ -750,6 +818,8 @@ function renderStandings(){
     row.appendChild(meta);
     row.appendChild(money);
     list.appendChild(row);
+    
+    displayIndex++;
   });
 }
 
