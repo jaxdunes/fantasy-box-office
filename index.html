@@ -489,13 +489,50 @@ let state = {
   selected: null
 };
 
-async function fetchText(url){
-  // Use CORS proxy to bypass GitHub Pages CSP restrictions
-  const corsProxy = "https://api.allorigins.win/raw?url=";
-  const u = corsProxy + encodeURIComponent(url + (url.includes("?") ? "&" : "?") + "cb=" + Date.now());
-  const res = await fetch(u, { cache:"no-store" });
-  if(!res.ok) throw new Error("Fetch failed: " + res.status);
-  return await res.text();
+// List of CORS proxies to try (in order)
+const CORS_PROXIES = [
+  (url) => url, // Try direct first (no proxy)
+  (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+  (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+  (url) => `https://cors-anywhere.herokuapp.com/${url}`,
+];
+
+async function fetchWithFallback(url) {
+  const cacheBust = url + (url.includes("?") ? "&" : "?") + "cb=" + Date.now();
+  
+  for (let i = 0; i < CORS_PROXIES.length; i++) {
+    const proxyFn = CORS_PROXIES[i];
+    const proxiedUrl = proxyFn(cacheBust);
+    
+    try {
+      console.log(`Trying fetch method ${i + 1}:`, proxiedUrl.substring(0, 80) + "...");
+      const res = await fetch(proxiedUrl, { 
+        cache: "no-store",
+        headers: {
+          'Accept': 'text/csv,text/plain,*/*'
+        }
+      });
+      
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      
+      const text = await res.text();
+      
+      // Verify we got CSV data (should start with headers, not HTML)
+      if (text.trim().startsWith('<!') || text.trim().startsWith('<html')) {
+        throw new Error("Received HTML instead of CSV");
+      }
+      
+      console.log(`✓ Success with method ${i + 1}`);
+      return text;
+    } catch (err) {
+      console.warn(`Method ${i + 1} failed:`, err.message);
+      if (i === CORS_PROXIES.length - 1) {
+        throw new Error(`All fetch methods failed. Last error: ${err.message}`);
+      }
+    }
+  }
 }
 
 async function loadAll(){
@@ -503,8 +540,8 @@ async function loadAll(){
   statusText.textContent = "Loading…";
 
   const [apiText, moviesText] = await Promise.all([
-    fetchText(API_CSV_URL),
-    MOVIES_CSV_URL.startsWith("PASTE_") ? Promise.resolve("") : fetchText(MOVIES_CSV_URL),
+    fetchWithFallback(API_CSV_URL),
+    MOVIES_CSV_URL.startsWith("PASTE_") ? Promise.resolve("") : fetchWithFallback(MOVIES_CSV_URL),
   ]);
 
   const apiRows = toObjects(apiText);
@@ -1056,7 +1093,7 @@ function showError(err){
   box.style.border = "1px solid rgba(255,77,109,.35)";
   box.style.background = "rgba(255,77,109,.10)";
   box.style.color = "rgba(255,220,228,.95)";
-  box.innerHTML = `<b>Data load error:</b><br>${String(err.message || err)}<br><br><span style="color:rgba(238,240,255,.65)">Tip: open your CSV URL directly and confirm it shows comma-separated text with headers + rows.</span>`;
+  box.innerHTML = `<b>Data load error:</b><br>${String(err.message || err)}<br><br><span style="color:rgba(238,240,255,.65)">Tip: Open browser console (F12) for more details. Check that your Google Sheet is published to web.</span>`;
   hero.querySelectorAll(".errbox").forEach(n=>n.remove());
   box.className = "errbox";
   hero.appendChild(box);
